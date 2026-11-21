@@ -105,6 +105,24 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 /* ---------- panels ---------- */
 .panel{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:18px;padding:16px}
 
+/* ---------- profile ---------- */
+.profile-row{display:flex;align-items:center;gap:12px;padding:8px 2px 0}
+.avatar{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;font-size:19px;font-weight:800;color:#fff;flex:none;overflow:hidden;cursor:pointer;padding:0;font-family:inherit;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.av-0{background:linear-gradient(140deg,#7c5cff,#4a34c9)}
+.av-1{background:linear-gradient(140deg,#ff6b4a,#b8391f)}
+.av-2{background:linear-gradient(140deg,#49c9f0,#1d7ea3)}
+.av-3{background:linear-gradient(140deg,#e9b949,#9a7318)}
+.profile-name{font-weight:780;font-size:16px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.field{display:block;margin-top:14px}
+.field span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.input{width:100%;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--text);font:inherit;font-size:15px}
+.input:focus{outline:none;border-color:var(--accent)}
+.avatar-picker{display:flex;gap:10px;margin-top:14px}
+.av-choice{width:44px;height:44px;border-radius:50%;border:2px solid transparent;cursor:pointer;color:#fff;font-weight:800;font-size:15px;font-family:inherit;padding:0;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.av-choice.is-on{border-color:#fff;box-shadow:0 0 0 3px rgba(124,92,255,.35)}
+
 /* ---------- hero ---------- */
 .hero{padding:8px 2px 4px}
 .hero .h1{margin-top:2px}
@@ -193,6 +211,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
   font-size:10px;font-weight:800;padding:2px 5px;border-radius:5px;
   background:rgba(5,6,12,.78);border:1px solid var(--line2);
 }
+.pick-mark{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);z-index:3;font-size:9.5px;font-weight:800;padding:3px 7px;border-radius:99px;background:var(--accent);color:#fff;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.4)}
 .card.locked .card-art{filter:grayscale(1) brightness(.36) contrast(1.15)}
 .card.locked .card-name{color:var(--muted)}
 .card.locked .card-pow{color:var(--muted)}
@@ -287,6 +306,15 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 #stakeLine b{font-weight:800}
 #stakeLine .win{color:var(--ok)}
 #stakeLine .lose{color:#ff8a95}
+.top-row{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:13.5px}
+.top-row:last-child{border-bottom:0}
+.top-rank{width:22px;color:var(--muted);font-weight:800;font-size:12px;flex:none}
+.top-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-row b{color:var(--gold);font-variant-numeric:tabular-nums}
+.top-row.top-1 .top-rank{color:var(--gold)}
+.top-row.top-2 .top-rank{color:#c8d2f0}
+.top-row.top-3 .top-rank{color:#d29a6a}
+.top-row.is-me{background:rgba(124,92,255,.12);border-radius:10px;padding-left:8px;padding-right:8px;margin-top:8px;border-bottom:0}
 
 /* ---------- energy ---------- */
 .energy-panel{margin-top:16px}
@@ -514,8 +542,16 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
   <main>
     <!-- HOME -->
     <section class="view is-active" id="view-home" data-view="home">
-      <div class="hero">
-        <p class="eyebrow">Твоя коллекция</p>
+      <div class="profile-row">
+        <button class="avatar av-0" id="avatarBtn" type="button" aria-label="Открыть профиль">И</button>
+        <div style="flex:1;min-width:0">
+          <div class="profile-name" id="profileName">Игрок</div>
+          <div class="profile-sub" id="profileSub">Пепелище · 0 кубков</div>
+        </div>
+        <button class="btn btn-sm" id="editProfile" type="button">Изменить</button>
+      </div>
+
+      <div class="hero" style="padding-top:14px">
         <h1 class="h1">Собери Арканум</h1>
         <p class="sub">Тридцать карт, пять фракций. Каждая дуэль приближает к полному своду.</p>
       </div>
@@ -578,7 +614,13 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
       </div>
 
       <div class="section">
-        <div class="section-head"><h2 class="h2">Жемчужина свода</h2><button class="link" id="toCollection" type="button">Вся коллекция</button></div>
+        <div class="section-head">
+          <h2 class="h2">Жемчужина свода</h2>
+          <div style="display:flex;gap:12px">
+            <button class="link" id="pickShowcase" type="button">Сменить</button>
+            <button class="link" id="toCollection" type="button">Вся коллекция</button>
+          </div>
+        </div>
         <div id="showcase"></div>
       </div>
     </section>
@@ -620,7 +662,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
       <div class="hero" style="padding-top:8px">
         <p class="eyebrow">Арена</p>
         <h1 class="h1">Три против трёх</h1>
-        <p class="sub">Выбери тройку. Пламя жжёт Дикость, Дикость душит Стужу, Стужа гасит Пламя. Свет и Тень бьют друг друга вдвое.</p>
+        <p class="sub">Выбери тройку. Пламя жжёт Природу, Природа душит Стужу, Стужа гасит Пламя. Свет и Тень бьют друг друга вдвое.</p>
       </div>
       <div class="panel trophy-panel">
         <div class="trophy-top">
@@ -636,7 +678,10 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
         <div class="bar" style="margin-top:12px"><i id="arenaBar" style="width:0%"></i></div>
         <div class="trophy-foot">
           <span class="sub" id="arenaNext" style="font-size:12px"></span>
-          <span class="sub num" id="arenaBest" style="font-size:11.5px"></span>
+          <div style="display:flex;gap:12px;align-items:center">
+            <button class="link" id="openTop" type="button" style="font-size:12px">Топ</button>
+            <span class="sub num" id="arenaBest" style="font-size:11.5px"></span>
+          </div>
         </div>
         <div class="trophy-foot" style="margin-top:7px">
           <span class="sub" id="stakeLine" style="font-size:12px"></span>
@@ -748,6 +793,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
    Конфигурация: сюда вставляются ссылки на счета Telegram Stars
    ============================================================ */
 var CONFIG = {
+  api: "",
   bot: "",
   invoices: {
     gems_s: "",
@@ -764,7 +810,7 @@ var FACTIONS = {
   frost:  { name: "Стужа",   color: "#49c9f0" },
   shadow: { name: "Тень",    color: "#b06cff" },
   light:  { name: "Свет",    color: "#f3d27a" },
-  wild:   { name: "Дикость", color: "#4ade80" }
+  wild:   { name: "Природа", color: "#4ade80" }
 };
 
 var RARITY = {
@@ -926,6 +972,8 @@ var DEFAULTS = {
   gems: 40,
   shards: 0,
   owned: {},
+  profile: { name: "", avatar: 0, photo: "" },
+  showcase: "",
   level: 1,
   xp: 0,
   pity: 0,
@@ -961,7 +1009,7 @@ function load() {
     var merged = JSON.parse(JSON.stringify(DEFAULTS));
     for (var k in parsed) {
       if (!Object.prototype.hasOwnProperty.call(parsed, k)) continue;
-      if (k === "owned" || k === "stats" || k === "themes" || k === "season" || k === "factionRewards" || k === "arenaRewards") {
+      if (k === "owned" || k === "stats" || k === "themes" || k === "season" || k === "factionRewards" || k === "arenaRewards" || k === "profile") {
         for (var kk in parsed[k]) merged[k][kk] = parsed[k][kk];
       } else {
         merged[k] = parsed[k];
@@ -1428,6 +1476,7 @@ function renderTop() {
 }
 
 function renderHome() {
+  renderProfile();
   var n = ownedCount();
   var pct = n / CARDS.length;
   var C = 2 * Math.PI * 32;
@@ -1484,22 +1533,111 @@ function renderDaily() {
   });
 }
 
+function displayName() {
+  var n = ((state.profile && state.profile.name) || "").trim();
+  return n || "Игрок";
+}
+
+function initialOf(name) {
+  var s = String(name || "И").trim();
+  return s ? s.charAt(0).toUpperCase() : "И";
+}
+
+function renderProfile() {
+  var nameEl = $("#profileName");
+  if (!nameEl || !state.profile) return;
+
+  var name = displayName();
+  nameEl.textContent = name;
+  $("#profileSub").textContent = currentArena().name + " · " + fmt(state.trophies) + " " +
+    plural(state.trophies, "кубок", "кубка", "кубков");
+
+  var av = $("#avatarBtn");
+  if (!av) return;
+  av.className = "avatar av-" + (state.profile.avatar || 0);
+  av.textContent = "";
+  if (state.profile.photo) {
+    var img = document.createElement("img");
+    img.alt = "";
+    img.referrerPolicy = "no-referrer";
+    img.src = state.profile.photo;
+    img.onerror = function () {
+      if (img.parentNode) img.parentNode.removeChild(img);
+      av.textContent = initialOf(name);
+    };
+    av.appendChild(img);
+  } else {
+    av.textContent = initialOf(name);
+  }
+}
+
+function openProfile() {
+  var name = displayName();
+  var html = "<h3>Профиль</h3>" +
+    '<p class="sub">Имя и цвет аватара. Фото подтягивается из Telegram, если приложение открыто в клиенте.</p>' +
+    '<label class="field"><span>Имя</span><input class="input" id="nameInput" maxlength="20" value="' +
+    esc(state.profile.name || "") + '" placeholder="Игрок"></label>' +
+    '<div class="avatar-picker" id="avatarPicker">';
+
+  for (var i = 0; i < 4; i++) {
+    html += '<button class="av-choice av-' + i + (i === (state.profile.avatar || 0) ? " is-on" : "") +
+      '" type="button" data-i="' + i + '" aria-label="Цвет аватара ' + (i + 1) + '">' +
+      initialOf(name) + "</button>";
+  }
+  html += "</div>" +
+    '<div class="btn-row"><button class="btn btn-primary btn-block" id="saveProfile" type="button">Сохранить</button></div>';
+
+  openSheet(html);
+
+  var picked = state.profile.avatar || 0;
+  $$("#avatarPicker .av-choice").forEach(function (b) {
+    b.addEventListener("click", function () {
+      picked = Number(b.dataset.i);
+      $$("#avatarPicker .av-choice").forEach(function (x) {
+        x.classList.toggle("is-on", x === b);
+      });
+    });
+  });
+
+  var saveBtn = $("#saveProfile");
+  if (saveBtn) saveBtn.addEventListener("click", function () {
+    var inp = $("#nameInput");
+    var v = (inp ? inp.value : "").trim().slice(0, 20);
+    state.profile.name = v;
+    state.profile.avatar = picked;
+    save();
+    closeSheet();
+    renderProfile();
+    haptic("light");
+    toast("Профиль обновлён");
+  });
+}
+
 function renderShowcase() {
   var box = $("#showcase");
   box.innerHTML = "";
+  var pick = $("#pickShowcase");
   var ownedCards = CARDS.filter(function (c) { return state.owned[c.id]; });
   if (!ownedCards.length) {
+    if (pick) pick.hidden = true;
     var empty = document.createElement("div");
     empty.className = "panel empty";
     empty.innerHTML = "<b>Пока пусто</b>Твой первый набор ждёт в разделе «Наборы».";
     box.appendChild(empty);
     return;
   }
-  ownedCards.sort(function (a, b) {
-    var order = ["mythic", "legendary", "epic", "rare", "common"];
-    return order.indexOf(a.rarity) - order.indexOf(b.rarity) || b.power - a.power;
-  });
-  var best = ownedCards[0];
+  if (pick) pick.hidden = false;
+
+  var best = state.showcase
+    ? CARDS.find(function (c) { return c.id === state.showcase && state.owned[c.id]; })
+    : null;
+  if (!best) {
+    ownedCards.sort(function (a, b) {
+      var order = ["mythic", "legendary", "epic", "rare", "common"];
+      return order.indexOf(a.rarity) - order.indexOf(b.rarity) || b.power - a.power;
+    });
+    best = ownedCards[0];
+  }
   var wrap = document.createElement("div");
   wrap.className = "panel showcase";
   wrap.appendChild(cardNode(best));
@@ -1561,6 +1699,50 @@ function renderPacks() {
     row.appendChild(info);
 
     list.appendChild(row);
+  });
+}
+
+function openShowcasePicker() {
+  var owned = CARDS.filter(function (c) { return state.owned[c.id]; });
+  if (!owned.length) { toast("Сначала открой набор"); return; }
+
+  openSheet('<h3>Карта на витрине</h3><p class="sub">Она висит на главной. Редкость и сила видны сразу.</p><div class="grid" id="showcaseGrid"></div>');
+
+  var grid = $("#showcaseGrid");
+  var order = ["mythic", "legendary", "epic", "rare", "common"];
+  owned.sort(function (a, b) {
+    return order.indexOf(a.rarity) - order.indexOf(b.rarity) || b.power - a.power;
+  });
+
+  owned.forEach(function (c) {
+    var wrap = document.createElement("div");
+    wrap.setAttribute("role", "button");
+    wrap.setAttribute("tabindex", "0");
+    wrap.setAttribute("aria-label", "Поставить " + c.name + " на витрину");
+    wrap.style.cssText = "padding:0;cursor:pointer;position:relative";
+    wrap.appendChild(cardNode(c, { static: true }));
+
+    if (state.showcase === c.id) {
+      var mark = document.createElement("span");
+      mark.className = "pick-mark";
+      mark.textContent = "На витрине";
+      wrap.appendChild(mark);
+    }
+
+    function choose() {
+      state.showcase = c.id;
+      save();
+      closeSheet();
+      renderShowcase();
+      haptic("light");
+      toast("Витрина обновлена");
+    }
+    wrap.addEventListener("click", choose);
+    wrap.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(); }
+    });
+
+    grid.appendChild(wrap);
   });
 }
 
@@ -1717,6 +1899,57 @@ function renderArena() {
   var bonus = Math.min(state.winStreak * 2, 8);
   $("#stakeLine").innerHTML = 'Победа <b class="win">+' + (TROPHY_WIN + bonus) + "</b> · Поражение <b class=\"lose\">−" + TROPHY_LOSS + "</b>" +
     (state.shield > 0 ? " · щит " + state.shield : "");
+}
+
+async function openLeaderboard() {
+  openSheet('<h3>Топ игроков</h3><p class="sub">Кубки принимаются только с подписью Telegram — накрутить не выйдет.</p><div id="topList"><div class="empty">Загружаю…</div></div>');
+  var box = $("#topList");
+  if (!box) return;
+
+  if (!hasApi()) {
+    box.innerHTML = '<div class="empty"><b>Не подключено</b>Впишите адрес Worker в CONFIG.api — таблица появится здесь.</div>';
+    return;
+  }
+
+  try {
+    var r = await fetch(apiBase() + "/api/leaderboard", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ initData: tgData(), limit: 50 })
+    });
+    if (!r.ok) throw new Error("http " + r.status);
+    var d = await r.json();
+    renderLeaderboard(box, d);
+  } catch (e) {
+    box.innerHTML = '<div class="empty"><b>Не удалось загрузить</b>Проверьте соединение.</div>';
+  }
+}
+
+function renderLeaderboard(box, d) {
+  var items = (d && d.items) || [];
+  box.innerHTML = "";
+  if (!items.length) {
+    box.innerHTML = '<div class="empty"><b>Пока пусто</b>Сыграй бой — и попадёшь в таблицу.</div>';
+    return;
+  }
+
+  items.forEach(function (it, i) {
+    var row = document.createElement("div");
+    row.className = "top-row" + (i < 3 ? " top-" + (i + 1) : "");
+    row.innerHTML = '<span class="top-rank num">' + (i + 1) + "</span>" +
+      '<span class="top-name">' + esc(it.name || "Игрок") + "</span>" +
+      '<b class="num">' + fmt(it.trophies) + "</b>";
+    box.appendChild(row);
+  });
+
+  if (d.me && d.me.rank) {
+    var me = document.createElement("div");
+    me.className = "top-row is-me";
+    me.innerHTML = '<span class="top-rank num">' + d.me.rank + "</span>" +
+      '<span class="top-name">Вы</span>' +
+      '<b class="num">' + fmt(d.me.trophies) + "</b>";
+    box.appendChild(me);
+  }
 }
 
 function syncFightButton() {
@@ -2122,6 +2355,7 @@ async function startBattle() {
   state.bestTrophies = Math.max(state.bestTrophies, state.trophies);
   state.seasonBest = Math.max(state.seasonBest, state.trophies);
   checkArenas();
+  apiReportBattle(from, to, result.won);
 
   var logBox = $("#battleLog");
   if (logBox) {
@@ -2792,11 +3026,15 @@ function bindEvents() {
   });
 
   $("#chipTrophies").addEventListener("click", function () { switchView("duel"); });
+  $("#editProfile").addEventListener("click", openProfile);
+  $("#avatarBtn").addEventListener("click", openProfile);
   $("#chipCoins").addEventListener("click", function () { switchView("shop"); });
   $("#chipGems").addEventListener("click", function () { switchView("shop"); });
   $("#quickPack").addEventListener("click", function () { switchView("packs"); });
   $("#quickDuel").addEventListener("click", function () { switchView("duel"); });
   $("#toCollection").addEventListener("click", function () { switchView("collection"); });
+  $("#pickShowcase").addEventListener("click", openShowcasePicker);
+  $("#openTop").addEventListener("click", openLeaderboard);
   $("#autoTeam").addEventListener("click", function () { autoTeam(); renderDuel(); });
   $("#fightBtn").addEventListener("click", startBattle);
   $("#energyPlus").addEventListener("click", openEnergySheet);
@@ -2860,6 +3098,61 @@ function inTelegram() {
   return false;
 }
 
+function tgData() {
+  try {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) {
+      return window.Telegram.WebApp.initData;
+    }
+  } catch (e) { /* нет доступа */ }
+  return "";
+}
+
+function apiBase() { return String(CONFIG.api || "").replace(/\/+$/, ""); }
+function hasApi() { return !!apiBase() && !!tgData(); }
+
+async function apiSync() {
+  if (!hasApi()) return;
+  try {
+    var r = await fetch(apiBase() + "/api/sync", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ initData: tgData(), trophies: state.trophies })
+    });
+    if (!r.ok) return;
+    var d = await r.json();
+    if (d && d.player) {
+      state.trophies = d.player.trophies;
+      state.bestTrophies = Math.max(state.bestTrophies, d.player.best || 0);
+      save();
+      render();
+    }
+  } catch (e) { /* офлайн: играем локально */ }
+}
+
+async function apiReportBattle(from, to, won) {
+  if (!hasApi()) return false;
+  try {
+    var r = await fetch(apiBase() + "/api/battle", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ initData: tgData(), from: from, to: to, won: won })
+    });
+    if (r.status === 409) {
+      var d = await r.json().catch(function () { return null; });
+      if (d && typeof d.trophies === "number") {
+        state.trophies = d.trophies;
+        state.bestTrophies = Math.max(state.bestTrophies, d.best || 0);
+        save();
+        render();
+      }
+      return false;
+    }
+    return r.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
 function loadTelegram() {
   if (!inTelegram()) return Promise.resolve();
   return new Promise(function (resolve) {
@@ -2883,6 +3176,14 @@ function attachTelegram() {
       if (tg.setHeaderColor) tg.setHeaderColor("#07080f");
       if (tg.setBackgroundColor) tg.setBackgroundColor("#07080f");
       if (tg.disableVerticalSwipes) { try { tg.disableVerticalSwipes(); } catch (e) {} }
+
+      var user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+      if (user && state.profile) {
+        var changed = false;
+        if (!state.profile.name && user.first_name) { state.profile.name = user.first_name; changed = true; }
+        if (!state.profile.photo && user.photo_url) { state.profile.photo = user.photo_url; changed = true; }
+        if (changed) { save(); renderProfile(); }
+      }
     }
   } catch (e) { tg = null; }
 }
@@ -2928,11 +3229,11 @@ function init() {
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
       boot();
-      loadTelegram().then(attachTelegram);
+      loadTelegram().then(function () { attachTelegram(); apiSync(); });
     });
   } else {
     boot();
-    loadTelegram().then(attachTelegram);
+    loadTelegram().then(function () { attachTelegram(); apiSync(); });
   }
 }
 
