@@ -326,8 +326,6 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 
 /* ---------- shop ---------- */
 .gem-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.035);margin-bottom:9px}
-.dev-row{border-style:dashed;border-color:rgba(233,185,73,.5);background:rgba(233,185,73,.06)}
-.dev-row .gem-name{color:var(--gold)}
 .gem-ico{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#9fe4ff,#2b7fa8);flex:none}
 .gem-ico svg{width:22px;height:22px;color:#04202e}
 .gem-name{font-weight:700;font-size:14.5px}
@@ -466,9 +464,11 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
   padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px);
   overflow:hidden;animation:fadeIn .2s ease;
 }
-.battle-top,.battle-bottom{display:flex;flex-direction:column;gap:6px}
+.battle-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px}
+.battle-bottom{display:flex;flex-direction:column;gap:6px}
+.battle-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:8px}
 .battle-label{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:center}
-.battle-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:min(100%,420px,50vh);margin:0 auto}
+.battle-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:min(100%,420px,46vh);margin:0 auto}
 .fighter{position:relative;animation:fighterIn .35s ease both}
 .fighter:nth-child(2){animation-delay:.06s}
 .fighter:nth-child(3){animation-delay:.12s}
@@ -490,7 +490,9 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 .battle-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:0;padding:4px 0}
 .battle-vs{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(255,255,255,.2);font-weight:800}
 .battle-ticker{font-size:12.5px;line-height:1.45;color:var(--muted);text-align:center;max-width:32ch;min-height:2.9em}
-.battle-skip{position:absolute;top:calc(env(safe-area-inset-top) + 8px);right:12px;min-height:32px;font-size:12px;padding:0 12px;border-radius:10px;background:rgba(255,255,255,.06)}
+.battle-skip{min-height:30px;font-size:12px;padding:0 12px;border-radius:10px;background:rgba(255,255,255,.06)}
+.fighter.is-targetable{cursor:pointer;outline:1px dashed rgba(255,255,255,.16);outline-offset:4px;border-radius:8px}
+.fighter.is-focus{outline:2px solid var(--gold);outline-offset:4px;box-shadow:0 0 22px -8px var(--gold)}
 .battle-result{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;text-align:center;background:rgba(4,5,11,.88);backdrop-filter:blur(6px);animation:fadeIn .25s ease}
 .battle-result h3{font-size:30px;font-weight:820;letter-spacing:-.03em}
 .battle-result.win h3{color:var(--ok);text-shadow:0 0 40px rgba(74,222,128,.35)}
@@ -796,7 +798,6 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
    ============================================================ */
 var CONFIG = {
   api: "https://arcanum-api.blavrentij73.workers.dev",
-  devGift: true,
   bot: "",
   invoices: {
     gems_s: "",
@@ -2075,83 +2076,107 @@ function makeFighter(card, side, boost, slot) {
   };
 }
 
-function simulate(myCards, enemyCards, boost) {
-  var A = myCards.map(function (c, i) { return makeFighter(c, "a", 1, i); });
-  var B = enemyCards.map(function (c, i) { return makeFighter(c, "b", boost, i); });
-  var events = [];
-  var ai = 0, bi = 0;
-  var turn = 0;
-  var guardRounds = 0;
+function makeBattle(myCards, enemyCards, boost) {
+  return {
+    A: myCards.map(function (c, i) { return makeFighter(c, "a", 1, i); }),
+    B: enemyCards.map(function (c, i) { return makeFighter(c, "b", boost, i); }),
+    ai: 0, bi: 0, turn: 0, guard: 0,
+    over: false, won: false
+  };
+}
 
-  function nextAlive(arr, idx) {
-    for (var i = 0; i < arr.length; i++) {
-      var k = (idx + i) % arr.length;
-      if (arr[k].hp > 0) return k;
-    }
-    return -1;
+function nextAlive(arr, idx) {
+  for (var i = 0; i < arr.length; i++) {
+    var k = (idx + i) % arr.length;
+    if (arr[k].hp > 0) return k;
+  }
+  return -1;
+}
+
+function finishBattle(b) {
+  b.over = true;
+  b.won = b.B.every(function (f) { return f.hp === 0; }) && b.A.some(function (f) { return f.hp > 0; });
+}
+
+function stepBattle(b, focus) {
+  var events = [];
+  if (b.over) return { events: events, over: true, won: b.won };
+
+  b.ai = nextAlive(b.A, b.ai);
+  b.bi = nextAlive(b.B, b.bi);
+  if (b.ai < 0 || b.bi < 0 || b.guard > 200) {
+    finishBattle(b);
+    return { events: events, over: true, won: b.won };
+  }
+  b.guard++;
+
+  var attacker = b.turn % 2 === 0 ? b.A[b.ai] : b.B[b.bi];
+  var defender;
+
+  if (attacker.side === "a") {
+    var t = (focus >= 0 && b.B[focus] && b.B[focus].hp > 0) ? focus : b.bi;
+    defender = b.B[t];
+  } else {
+    defender = b.A[b.ai];
   }
 
-  while (A.some(function (f) { return f.hp > 0; }) && B.some(function (f) { return f.hp > 0; }) && guardRounds < 80) {
-    guardRounds++;
-    ai = nextAlive(A, ai);
-    bi = nextAlive(B, bi);
-    if (ai < 0 || bi < 0) break;
+  var mult = factionMult(attacker.card.faction, defender.card.faction);
+  if (attacker.trait === "burst") mult *= 1.15;
+  if (defender.trait === "guard") mult *= 0.85;
 
-    var attacker = turn % 2 === 0 ? A[ai] : B[bi];
-    var defender = turn % 2 === 0 ? B[bi] : A[ai];
+  var dmg = attacker.atk * mult * (0.9 + Math.random() * 0.2);
+  var crit = Math.random() < 0.12;
+  if (crit) dmg *= 1.8;
+  dmg = Math.max(1, Math.round(dmg));
+  defender.hp = Math.max(0, defender.hp - dmg);
 
-    var mult = factionMult(attacker.card.faction, defender.card.faction);
-    if (attacker.trait === "burst") mult *= 1.15;
-    if (defender.trait === "guard") mult *= 0.85;
+  var heal = 0;
+  if (attacker.trait === "drain") {
+    heal = Math.round(dmg * 0.2);
+    attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
+  }
 
-    var dmg = attacker.atk * mult * (0.9 + Math.random() * 0.2);
-    var crit = Math.random() < 0.12;
-    if (crit) dmg *= 1.8;
-    dmg = Math.max(1, Math.round(dmg));
-    defender.hp = Math.max(0, defender.hp - dmg);
+  events.push({
+    k: "hit",
+    side: attacker.side,
+    aSlot: attacker.slot, bSlot: defender.slot,
+    dmg: dmg, crit: crit, heal: heal,
+    defHp: defender.hp, defMax: defender.maxHp,
+    atkHp: attacker.hp, atkMax: attacker.maxHp,
+    text: attacker.card.name + " бьёт " + defender.card.name + " на " + dmg +
+      (heal ? ", лечится на " + heal : "") + (crit ? ". Критический удар!" : ".")
+  });
 
-    var heal = 0;
-    if (attacker.trait === "drain") {
-      heal = Math.round(dmg * 0.2);
-      attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
-    }
-
+  if (attacker.trait === "swift" && Math.random() < 0.2 && defender.hp > 0) {
+    var d2 = Math.max(1, Math.round(attacker.atk * mult * 0.6));
+    defender.hp = Math.max(0, defender.hp - d2);
     events.push({
       k: "hit",
       side: attacker.side,
-      aSlot: ai, bSlot: bi,
-      dmg: dmg, crit: crit, heal: heal,
+      aSlot: attacker.slot, bSlot: defender.slot,
+      dmg: d2, crit: false, heal: 0,
       defHp: defender.hp, defMax: defender.maxHp,
       atkHp: attacker.hp, atkMax: attacker.maxHp,
-      text: attacker.card.name + " бьёт " + defender.card.name + " на " + dmg +
-        (heal ? ", лечится на " + heal : "") + (crit ? ". Критический удар!" : ".")
+      text: attacker.card.name + " повторяет удар — ещё " + d2 + "."
     });
-
-    if (attacker.trait === "swift" && Math.random() < 0.2 && defender.hp > 0) {
-      var d2 = Math.max(1, Math.round(attacker.atk * mult * 0.6));
-      defender.hp = Math.max(0, defender.hp - d2);
-      events.push({
-        k: "hit",
-        side: attacker.side,
-        aSlot: ai, bSlot: bi,
-        dmg: d2, crit: false, heal: 0,
-        defHp: defender.hp, defMax: defender.maxHp,
-        atkHp: attacker.hp, atkMax: attacker.maxHp,
-        text: attacker.card.name + " повторяет удар — ещё " + d2 + "."
-      });
-    }
-
-    if (defender.hp === 0) {
-      events.push({ k: "down", side: defender.side, slot: defender.slot, text: defender.card.name + " выбывает из дуэли." });
-      if (defender.side === "a") ai = (ai + 1) % A.length;
-      else bi = (bi + 1) % B.length;
-    }
-
-    turn++;
   }
 
-  var won = B.every(function (f) { return f.hp === 0; }) && A.some(function (f) { return f.hp > 0; });
-  return { events: events, won: won, squadA: A, squadB: B };
+  if (defender.hp === 0) {
+    events.push({
+      k: "down",
+      side: defender.side,
+      slot: defender.slot,
+      text: defender.card.name + " выбывает из дуэли."
+    });
+  }
+
+  b.turn++;
+
+  if (b.A.every(function (f) { return f.hp === 0; }) || b.B.every(function (f) { return f.hp === 0; })) {
+    finishBattle(b);
+  }
+
+  return { events: events, over: b.over, won: b.won };
 }
 
 function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -2172,13 +2197,15 @@ function fighterNode(card, side, slot) {
   return el;
 }
 
-function playBattle(mine, enemies, result, reward) {
+function playBattle(b, onFinish) {
   return new Promise(function (resolve) {
     var overlay = document.createElement("div");
     overlay.className = "battle";
     overlay.innerHTML =
-      '<button class="btn battle-skip" type="button" id="battleSkip">Пропустить</button>' +
-      '<div class="battle-top"><div class="battle-label">Противник</div><div class="battle-row" data-side="b"></div></div>' +
+      '<div class="battle-head"><span class="battle-label">Противник</span>' +
+      '<button class="btn battle-skip" type="button" id="battleSkip">Пропустить</button></div>' +
+      '<div class="battle-row" data-side="b"></div>' +
+      '<div class="battle-hint">Тапните врага — будете бить его первым</div>' +
       '<div class="battle-mid"><div class="battle-vs">дуэль</div><div class="battle-ticker">Противники сходятся</div></div>' +
       '<div class="battle-bottom"><div class="battle-row" data-side="a"></div><div class="battle-label">Твой отряд</div></div>';
 
@@ -2186,14 +2213,25 @@ function playBattle(mine, enemies, result, reward) {
     var bRow = overlay.querySelector('.battle-row[data-side="b"]');
     var ticker = overlay.querySelector(".battle-ticker");
 
-    var aNodes = mine.map(function (c, i) { var n = fighterNode(c, "a", i); aRow.appendChild(n); return n; });
-    var bNodes = enemies.map(function (c, i) { var n = fighterNode(c, "b", i); bRow.appendChild(n); return n; });
+    var aNodes = b.A.map(function (f) { var n = fighterNode(f.card, "a", f.slot); aRow.appendChild(n); return n; });
+    var bNodes = b.B.map(function (f) { var n = fighterNode(f.card, "b", f.slot); bRow.appendChild(n); return n; });
 
     document.body.appendChild(overlay);
     document.body.classList.add("is-locked");
 
-    var idx = 0;
+    var focus = -1;
+    var skipped = false;
     var finished = false;
+
+    function setFocus(i) {
+      focus = i;
+      bNodes.forEach(function (n, idx) { n.classList.toggle("is-focus", idx === i); });
+    }
+
+    bNodes.forEach(function (n, idx) {
+      n.classList.add("is-targetable");
+      n.addEventListener("click", function () { if (!b.over) setFocus(idx); });
+    });
 
     function setHp(node, hp, max) {
       var bar = node.querySelector(".hp i");
@@ -2239,19 +2277,26 @@ function playBattle(mine, enemies, result, reward) {
       haptic(ev.crit ? "medium" : "light");
     }
 
+    function markDead(ev) {
+      var node = ev.side === "a" ? aNodes[ev.slot] : bNodes[ev.slot];
+      if (node) node.classList.add("is-dead");
+    }
+
     function finish() {
       if (finished) return;
       finished = true;
 
+      var reward = onFinish(b.won);
+
       var box = document.createElement("div");
-      box.className = "battle-result " + (result.won ? "win" : "lose");
+      box.className = "battle-result " + (b.won ? "win" : "lose");
       var trophyTxt = reward.shielded
         ? "Кубки " + reward.trophyFrom + " · щит спас"
         : (reward.trophyTo >= reward.trophyFrom ? "+" : "−") +
           Math.abs(reward.trophyTo - reward.trophyFrom) +
           " кубков · " + reward.trophyFrom + " → " + reward.trophyTo;
 
-      box.innerHTML = "<h3>" + (result.won ? "Победа" : "Поражение") + "</h3>" +
+      box.innerHTML = "<h3>" + (b.won ? "Победа" : "Поражение") + "</h3>" +
         "<p>+" + reward.coins + " монет · +" + reward.xp + " XP</p>" +
         '<p class="battle-trophy">' + trophyTxt + "</p>";
 
@@ -2262,41 +2307,38 @@ function playBattle(mine, enemies, result, reward) {
       btn.addEventListener("click", function () {
         overlay.remove();
         document.body.classList.remove("is-locked");
-        resolve();
+        resolve(reward);
       });
       box.appendChild(btn);
       overlay.appendChild(box);
-      haptic(result.won ? "success" : "warning");
+      haptic(b.won ? "success" : "warning");
     }
 
-    function step() {
-      if (finished) return;
-      if (idx >= result.events.length) { finish(); return; }
-      var ev = result.events[idx++];
+    (async function run() {
+      while (!b.over) {
+        var res = stepBattle(b, focus);
+        var hadHit = false;
 
-      if (ev.k === "hit") {
-        paint(ev, true);
-        ticker.textContent = ev.text;
-        setTimeout(step, 520);
-      } else if (ev.k === "down") {
-        var node = ev.side === "a" ? aNodes[ev.slot] : bNodes[ev.slot];
-        if (node) node.classList.add("is-dead");
-        ticker.textContent = ev.text;
-        setTimeout(step, 360);
-      } else {
-        setTimeout(step, 0);
-      }
-    }
+        for (var i = 0; i < res.events.length; i++) {
+          var ev = res.events[i];
+          if (ev.k === "hit") {
+            hadHit = true;
+            paint(ev, !skipped);
+            ticker.textContent = ev.text;
+          } else if (ev.k === "down") {
+            markDead(ev);
+            ticker.textContent = ev.text;
+          }
+        }
 
-    overlay.querySelector("#battleSkip").addEventListener("click", function () {
-      if (finished) return;
-      for (; idx < result.events.length; idx++) {
-        if (result.events[idx].k === "hit") paint(result.events[idx], false);
+        if (!skipped) await sleep(hadHit ? 520 : 360);
       }
       finish();
-    });
+    })();
 
-    setTimeout(step, 340);
+    overlay.querySelector("#battleSkip").addEventListener("click", function () {
+      skipped = true;
+    });
   });
 }
 
@@ -2317,61 +2359,62 @@ async function startBattle() {
   for (var i = 0; i < 3; i++) enemies.push(pick(pool));
 
   var boost = 0.72 + state.level * 0.075;
-  var result = simulate(mine, enemies, boost);
+  var battle = makeBattle(mine, enemies, boost);
 
-  var coins = result.won ? 40 + state.level * 8 + Math.floor(Math.random() * 15) : 10;
-  var xp = result.won ? 20 : 6;
+  var reward = await playBattle(battle, function (won) {
+    var from = state.trophies;
+    var bonus = Math.min(state.winStreak * 2, 8);
+    var floor = currentArena().at;
+    var to = from;
+    var shielded = false;
 
-  var from = state.trophies;
-  var bonus = Math.min(state.winStreak * 2, 8);
-  var floor = currentArena().at;
-  var to = from;
-  var shielded = false;
+    if (won) {
+      to = from + TROPHY_WIN + bonus;
+    } else if (state.shield > 0) {
+      shielded = true;
+    } else {
+      to = Math.max(floor, from - TROPHY_LOSS);
+    }
 
-  if (result.won) {
-    to = from + TROPHY_WIN + bonus;
-  } else if (state.shield > 0) {
-    shielded = true;
-  } else {
-    to = Math.max(floor, from - TROPHY_LOSS);
-  }
-
-  await playBattle(mine, enemies, result, {
-    coins: coins, xp: xp,
-    trophyFrom: from, trophyTo: to, shielded: shielded
+    return {
+      won: won,
+      coins: won ? 40 + state.level * 8 + Math.floor(Math.random() * 15) : 10,
+      xp: won ? 20 : 6,
+      trophyFrom: from, trophyTo: to, shielded: shielded
+    };
   });
 
-  state.coins += coins;
+  state.coins += reward.coins;
   state.stats.duels++;
-  if (result.won) state.stats.wins++;
-  addXp(xp);
+  if (reward.won) state.stats.wins++;
+  addXp(reward.xp);
 
-  if (result.won) {
+  if (reward.won) {
     state.winStreak++;
     state.loseStreak = 0;
   } else {
     state.loseStreak++;
     state.winStreak = 0;
-    if (shielded) state.shield = Math.max(0, state.shield - 1);
+    if (reward.shielded) state.shield = Math.max(0, state.shield - 1);
   }
 
-  state.trophies = to;
+  state.trophies = reward.trophyTo;
   state.bestTrophies = Math.max(state.bestTrophies, state.trophies);
   state.seasonBest = Math.max(state.seasonBest, state.trophies);
   checkArenas();
-  apiReportBattle(from, to, result.won);
+  apiReportBattle(reward.trophyFrom, reward.trophyTo, reward.won);
 
   var logBox = $("#battleLog");
   if (logBox) {
     logBox.innerHTML = "";
-    var delta = to - from;
-    var deltaTxt = shielded
+    var delta = reward.trophyTo - reward.trophyFrom;
+    var deltaTxt = reward.shielded
       ? "кубки под щитом"
       : (delta >= 0 ? "+" + delta : "−" + Math.abs(delta)) + " кубков";
     var line = document.createElement("div");
     line.className = "log-line win";
-    line.textContent = (result.won ? "Победа" : "Поражение") + ": " + deltaTxt +
-      ", +" + coins + " монет, +" + xp + " XP.";
+    line.textContent = (reward.won ? "Победа" : "Поражение") + ": " + deltaTxt +
+      ", +" + reward.coins + " монет, +" + reward.xp + " XP.";
     logBox.appendChild(line);
   }
 
@@ -2404,27 +2447,6 @@ function renderGems() {
   var gl = $("#gemList");
   if (!gl) return;
   gl.innerHTML = "";
-
-  if (CONFIG.devGift) {
-    var dev = document.createElement("div");
-    dev.className = "gem-row dev-row";
-    dev.innerHTML = '<div class="gem-ico"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5 17 8l-7 9.5L3 8z" fill="currentColor"/></svg></div>' +
-      '<div style="flex:1;min-width:0"><div class="gem-name">Тест: 500 гемов</div>' +
-      '<div class="gem-sub">Бесплатно, для проверки. Перед релизом выключите.</div></div>';
-    var db = document.createElement("button");
-    db.type = "button";
-    db.className = "btn btn-sm";
-    db.textContent = "Получить";
-    db.addEventListener("click", function () {
-      state.gems += 500;
-      save();
-      render();
-      haptic("success");
-      toast("+500 гемов (тест)");
-    });
-    dev.appendChild(db);
-    gl.appendChild(dev);
-  }
 
   GEM_PACKS.forEach(function (g) {
     var row = document.createElement("div");
