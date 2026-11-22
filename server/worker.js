@@ -224,7 +224,9 @@ async function sync(request, env) {
   if (!user) return json({ error: "bad_init" }, 401);
 
   const id = String(user.id);
-  const name = String(user.first_name || user.username || "Игрок").slice(0, 20);
+  const tgName = String(user.first_name || user.username || "Игрок").slice(0, 20);
+  const custom = String(body.name || "").trim().slice(0, 20);
+  const name = custom || tgName;
   const seed = Math.max(0, Math.min(MAX_BOOTSTRAP_TROPHIES, Number(body.trophies) || 0));
   const now = Math.floor(Date.now() / 1000);
   const season = new Date().toISOString().slice(0, 7);

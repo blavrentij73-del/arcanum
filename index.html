@@ -1670,6 +1670,7 @@ function openProfile() {
     save();
     closeSheet();
     renderProfile();
+    apiSync();
     haptic("light");
     toast("Профиль обновлён");
   });
@@ -3239,7 +3240,11 @@ async function apiSync() {
     var r = await fetch(apiBase() + "/api/sync", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ initData: tgData(), trophies: state.trophies })
+      body: JSON.stringify({
+        initData: tgData(),
+        trophies: state.trophies,
+        name: (state.profile && state.profile.name ? state.profile.name : "").trim()
+      })
     });
     if (!r.ok) return;
     var d = await r.json();
