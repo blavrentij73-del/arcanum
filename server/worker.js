@@ -188,11 +188,30 @@ async function webhook(request, env) {
   }
 
   if (msg && typeof msg.text === "string" && msg.text.indexOf("/start") === 0 && env.APP_URL) {
-    await telegram(env, "sendMessage", {
+    const caption =
+      "<b>Арканум</b> — карточная коллекция в Telegram.\n\n" +
+      "Пятьдесят карт, пять стихий: Пламя, Стужа, Тень, Свет и Природа. " +
+      "Открывай наборы, собирай свод и сражайся на арене три на три.\n\n" +
+      "Первый набор ждёт внутри — забери его при входе.";
+    const keyboard = { inline_keyboard: [[{ text: "Играть", web_app: { url: env.APP_URL } }]] };
+    const photo = env.APP_URL.replace(/\/+$/, "") + "/assets/welcome.jpg";
+
+    const sent = await telegram(env, "sendPhoto", {
       chat_id: msg.chat.id,
-      text: "Арканум — карточная коллекция. Открывай свод.",
-      reply_markup: { inline_keyboard: [[{ text: "Играть", web_app: { url: env.APP_URL } }]] }
+      photo: photo,
+      caption: caption,
+      parse_mode: "HTML",
+      reply_markup: keyboard
     });
+
+    if (!sent || !sent.ok) {
+      await telegram(env, "sendMessage", {
+        chat_id: msg.chat.id,
+        text: caption,
+        parse_mode: "HTML",
+        reply_markup: keyboard
+      });
+    }
     return json({ ok: true });
   }
 

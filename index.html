@@ -197,10 +197,18 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
   background:linear-gradient(to top,rgba(5,6,12,.95) 30%,rgba(5,6,12,.55) 68%,transparent);
 }
 .card-name{
-  font-size:10.5px;font-weight:680;line-height:1.15;letter-spacing:-.01em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;text-align:left;
+  font-size:10px;font-weight:680;line-height:1.15;letter-spacing:-.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;flex:1;text-align:left;
 }
-.card-pow{font-size:11px;font-weight:800;color:var(--gold);flex:none;letter-spacing:-.02em}
+.card-pow{font-size:11px;font-weight:800;color:var(--gold);flex:none;background:rgba(5,6,12,.68);border:1px solid rgba(233,185,73,.35);border-radius:6px;padding:1px 4px;min-width:19px;text-align:center;line-height:1.3}
+.card-faction{position:absolute;top:6px;left:6px;z-index:2;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;background:rgba(5,6,12,.62);border:1px solid rgba(255,255,255,.14)}
+.card-faction svg{width:10px;height:10px}
+.card-gem{position:absolute;top:10px;right:9px;z-index:2;width:6px;height:6px;transform:rotate(45deg);background:#9aa3c4;box-shadow:0 0 8px #9aa3c4}
+.card[data-r="rare"] .card-gem{background:#58a6ff;box-shadow:0 0 8px #58a6ff}
+.card[data-r="epic"] .card-gem{background:#b06cff;box-shadow:0 0 9px #b06cff}
+.card[data-r="legendary"] .card-gem{background:#e9b949;box-shadow:0 0 10px #e9b949}
+.card[data-r="mythic"] .card-gem{background:#ff5c8a;box-shadow:0 0 10px #ff5c8a}
 .card-badge{
   position:absolute;top:6px;left:6px;z-index:2;
   font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
@@ -450,8 +458,8 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 @keyframes legendPulse{0%{box-shadow:0 0 0 0 rgba(233,185,73,.7)}70%{box-shadow:0 0 0 22px rgba(233,185,73,0)}100%{box-shadow:0 0 0 0 rgba(233,185,73,0)}}
 .opener-actions{display:flex;gap:10px;max-width:420px;width:100%;margin:0 auto}
 .opener-actions .btn{flex:1}
-.new-flag{position:absolute;top:6px;left:6px;z-index:3;font-size:8.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 5px;border-radius:5px;background:var(--ok);color:#062e16}
-.dupe-flag{position:absolute;top:6px;left:6px;z-index:3;font-size:8.5px;font-weight:800;letter-spacing:.04em;padding:3px 5px;border-radius:5px;background:rgba(5,6,12,.8);border:1px solid var(--line2);color:#b9c2e6}
+.new-flag{position:absolute;top:6px;left:50%;transform:translateX(-50%);z-index:3;font-size:8.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 5px;border-radius:5px;background:var(--ok);color:#062e16;white-space:nowrap}
+.dupe-flag{position:absolute;top:6px;left:50%;transform:translateX(-50%);z-index:3;font-size:8.5px;font-weight:800;letter-spacing:.04em;padding:3px 5px;border-radius:5px;background:rgba(5,6,12,.8);border:1px solid var(--line2);color:#b9c2e6;white-space:nowrap}
 @media(max-width:340px){.opener-cards{gap:8px}}
 
 /* ---------- battle arena ---------- */
@@ -557,7 +565,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 
       <div class="hero" style="padding-top:14px">
         <h1 class="h1">Собери Арканум</h1>
-        <p class="sub">Тридцать карт, пять фракций. Каждая дуэль приближает к полному своду.</p>
+        <p class="sub">Пятьдесят карт, пять фракций. Каждая дуэль приближает к полному своду.</p>
       </div>
 
       <div class="panel progress-card">
@@ -650,7 +658,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
       <div class="hero" style="padding-top:8px">
         <p class="eyebrow">Свод</p>
         <h1 class="h1" id="collTitle">Коллекция</h1>
-        <p class="sub" id="collSub">0 из 30 карт</p>
+        <p class="sub" id="collSub">0 из 50 карт</p>
       </div>
       <div class="filters" id="factionFilters" role="tablist" aria-label="Фильтр по фракциям"></div>
       <div class="filter-row">
@@ -817,6 +825,14 @@ var FACTIONS = {
   wild:   { name: "Природа", color: "#4ade80" }
 };
 
+var FACTION_GLYPH = {
+  flame:  { d: "M12 3c2 3.2 4.2 5.4 4.2 8.4a4.2 4.2 0 0 1-8.4 0c0-3 2.2-5.2 4.2-8.4z", fill: true },
+  frost:  { d: "M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17", fill: false },
+  shadow: { d: "M15 3a9 9 0 1 0 0 18 7.2 7.2 0 0 1 0-18z", fill: true },
+  light:  { d: "M12 2v20M2 12h20M5 5l14 14M19 5L5 19", fill: false },
+  wild:   { d: "M12 21C6.5 16 6.5 7.5 12 3c5.5 4.5 5.5 13 0 18z", fill: true }
+};
+
 var RARITY = {
   common:    { label: "Обычная",     color: "#9aa3c4", shards: 5,   craft: 60 },
   rare:      { label: "Редкая",      color: "#58a6ff", shards: 15,  craft: 180 },
@@ -867,7 +883,32 @@ var CARDS = [
   { id: "wi-2", name: "Шипастый пёс",       faction: "wild",   rarity: "common",    power: 13, trait: "burst", flavor: "Лает редко. Кусает всегда." },
   { id: "wi-3", name: "Дубрава",            faction: "wild",   rarity: "rare",      power: 24, trait: "guard", flavor: "Не дерево. Договор между сотней деревьев." },
   { id: "wi-4", name: "Звероликий",         faction: "wild",   rarity: "epic",      power: 41, trait: "burst", flavor: "Он помнит человека, которым был. Неохотно." },
-  { id: "wi-5", name: "Корень мира",        faction: "wild",   rarity: "legendary", power: 56, trait: "drain", flavor: "Держит землю. Или земля держит его." }
+  { id: "wi-5", name: "Корень мира",        faction: "wild",   rarity: "legendary", power: 56, trait: "drain", flavor: "Держит землю. Или земля держит его." },
+
+  { id: "fl-8", name: "Огненный шаг",       faction: "flame",  rarity: "common",    power: 12, trait: "swift", flavor: "След, который не остывает." },
+  { id: "fl-9", name: "Пепельная жрица",    faction: "flame",  rarity: "rare",      power: 23, trait: "drain", flavor: "Читает будущее по углям." },
+  { id: "fl-10", name: "Сердце горна",      faction: "flame",  rarity: "epic",      power: 40, trait: "guard", flavor: "Внутри него плавится камень." },
+
+  { id: "fr-7", name: "Иней",               faction: "frost",  rarity: "common",    power: 11, trait: "none",  flavor: "Тонкий слой на всём, что ты любишь." },
+  { id: "fr-8", name: "Снежная сова",       faction: "frost",  rarity: "common",    power: 13, trait: "swift", flavor: "Белая на белом." },
+  { id: "fr-9", name: "Ледяная жила",       faction: "frost",  rarity: "rare",      power: 24, trait: "guard", flavor: "Добыча, которую нельзя выкопать." },
+  { id: "fr-10", name: "Хранитель полюса",  faction: "frost",  rarity: "epic",      power: 38, trait: "guard", flavor: "Стоит там, где кончаются карты." },
+
+  { id: "sh-7", name: "Тень-попутчик",      faction: "shadow", rarity: "common",    power: 12, trait: "swift", flavor: "Идёт рядом, но чуть позади." },
+  { id: "sh-8", name: "Коллекционер имён",  faction: "shadow", rarity: "rare",      power: 22, trait: "drain", flavor: "Забирает имя — и ты уже не ты." },
+  { id: "sh-9", name: "Полог ночи",         faction: "shadow", rarity: "epic",      power: 36, trait: "guard", flavor: "Днём его нет. Ночью — везде." },
+  { id: "sh-10", name: "Тот, кто ждёт",     faction: "shadow", rarity: "legendary", power: 57, trait: "drain", flavor: "Он не гонится. Он уже там." },
+
+  { id: "li-7", name: "Медный колокольчик", faction: "light",  rarity: "common",    power: 10, trait: "none",  flavor: "Слышен только тем, кто слушает." },
+  { id: "li-8", name: "Стекольщик",         faction: "light",  rarity: "rare",      power: 21, trait: "guard", flavor: "Собирает свет в витражи." },
+  { id: "li-9", name: "Пламя свечи",        faction: "light",  rarity: "epic",      power: 35, trait: "drain", flavor: "Маленькое, но не гаснет." },
+  { id: "li-10", name: "Вечный полдень",    faction: "light",  rarity: "legendary", power: 60, trait: "burst", flavor: "Время, в котором ничего не случается." },
+
+  { id: "wi-6", name: "Мох",                faction: "wild",   rarity: "common",    power: 10, trait: "guard", flavor: "Растёт там, где сдались все." },
+  { id: "wi-7", name: "Терновник",          faction: "wild",   rarity: "common",    power: 14, trait: "burst", flavor: "Колючий без злобы." },
+  { id: "wi-8", name: "Пчелиный рой",       faction: "wild",   rarity: "rare",      power: 20, trait: "swift", flavor: "Одна воля на сотню тел." },
+  { id: "wi-9", name: "Древо-пастух",       faction: "wild",   rarity: "epic",      power: 39, trait: "guard", flavor: "Считает овец веками." },
+  { id: "wi-10", name: "Первый росток",     faction: "wild",   rarity: "mythic",    power: 84, trait: "drain", flavor: "До него был только камень." }
 ];
 
 var PACKS = {
@@ -950,7 +991,7 @@ var PITY_LIMIT = 10;
 var ENERGY_MAX = 20;
 var ENERGY_COST = 4;
 var ENERGY_REGEN_MS = 5 * 60 * 1000;
-var ENERGY_REFILL_GEMS = 20;
+var ENERGY_GEM_PER_UNIT = 1;
 
 var ARENAS = [
   { name: "Пепелище",       at: 0,    reward: null },
@@ -1114,6 +1155,14 @@ function sigil(card) {
 
   out += '<rect width="100" height="130" fill="url(#' + u + 'bg)"/>';
   out += '<rect width="100" height="130" fill="url(#' + u + 'glow)"/>';
+
+  var glyph = FACTION_GLYPH[card.faction];
+  if (glyph) {
+    out += '<g transform="translate(50 62) scale(2.1) translate(-12 -12)" opacity=".1">';
+    out += '<path d="' + glyph.d + '" fill="' + (glyph.fill ? col : "none") +
+      '" stroke="' + (glyph.fill ? "none" : col) + '" stroke-width="1.4" stroke-linecap="round"/>';
+    out += "</g>";
+  }
 
   // звёздная пыль
   for (i = 0; i < 22; i++) {
@@ -1435,6 +1484,14 @@ function cardNode(card, opts) {
   var inner = '<div class="card-art">' + sigil(card) +
     ((card.rarity === "legendary" || card.rarity === "mythic") && !locked ? '<div class="foil"></div>' : '') +
     '</div>';
+
+  if (!locked) {
+    var glyph = FACTION_GLYPH[card.faction];
+    inner += '<span class="card-faction" style="color:' + FACTIONS[card.faction].color + '">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + glyph.d + '" fill="' + (glyph.fill ? "currentColor" : "none") +
+      '" stroke="' + (glyph.fill ? "none" : "currentColor") + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' +
+      '<span class="card-gem"></span>';
+  }
 
   if (opts.isNew) inner += '<span class="new-flag">Новая</span>';
   else if (opts.dupeShards) inner += '<span class="dupe-flag">+' + opts.dupeShards + ' оск.</span>';
@@ -2016,16 +2073,27 @@ function buyShield() {
   render();
 }
 
+function energyRefillCost() {
+  return Math.max(0, (ENERGY_MAX - energyNow()) * ENERGY_GEM_PER_UNIT);
+}
+
+function energyCostLabel(cost) {
+  return cost + " " + plural(cost, "гем", "гема", "гемов");
+}
+
 function openEnergySheet() {
   var v = energyNow();
-  var full = v >= ENERGY_MAX;
+  var cost = energyRefillCost();
+  var full = cost <= 0;
   openSheet(
     "<h3>Энергия</h3>" +
-    '<p class="sub">Одна дуэль стоит ' + ENERGY_COST + " энергии. Единица восстанавливается за 5 минут.</p>" +
+    '<p class="sub">Одна дуэль стоит ' + ENERGY_COST + " энергии. Единица восстанавливается за 5 минут, пополнение — 1 гем за единицу.</p>" +
     '<div class="kv"><span>Сейчас</span><b class="num">' + v + " / " + ENERGY_MAX + "</b></div>" +
     '<div class="kv"><span>До полного</span><b>' + (full ? "заряд полный" : formatMs(energyFullMs())) + "</b></div>" +
+    '<div class="kv"><span>Пополнение</span><b>' + (full ? "не требуется" : energyCostLabel(cost)) + "</b></div>" +
     '<div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">' +
-    '<button class="btn btn-primary btn-block" id="energyBuy" type="button" ' + (full ? "disabled" : "") + ">Восстановить за " + ENERGY_REFILL_GEMS + " гемов</button>" +
+    '<button class="btn btn-primary btn-block" id="energyBuy" type="button" ' + (full ? "disabled" : "") + ">" +
+    (full ? "Заряд полный" : "Восстановить за " + energyCostLabel(cost)) + "</button>" +
     '<button class="btn btn-block" data-close type="button">Подождать</button>' +
     "</div>"
   );
@@ -2034,9 +2102,10 @@ function openEnergySheet() {
 }
 
 function buyEnergy() {
-  if (energyNow() >= ENERGY_MAX) return;
-  if (state.gems < ENERGY_REFILL_GEMS) { toast("Не хватает гемов: нужно " + ENERGY_REFILL_GEMS); return; }
-  state.gems -= ENERGY_REFILL_GEMS;
+  var cost = energyRefillCost();
+  if (cost <= 0) return;
+  if (state.gems < cost) { toast("Не хватает гемов: нужно " + energyCostLabel(cost)); return; }
+  state.gems -= cost;
   state.energy = ENERGY_MAX;
   state.energyTs = Date.now();
   save();
@@ -3329,7 +3398,7 @@ function boot() {
 function showIntro() {
   openSheet(
     "<h3>Добро пожаловать в Арканум</h3>" +
-    '<p class="sub">Тридцать карт, пять фракций и арена три на три. Начни с бесплатного набора — и свод откроется.</p>' +
+    '<p class="sub">Пятьдесят карт, пять фракций и арена три на три. Начни с бесплатного набора — и свод откроется.</p>' +
     '<div class="trait-box"><b>Как это работает</b><span>Открывай наборы за монеты, собирай фракции, крафти недостающие карты за осколки. Повторы автоматически превращаются в осколки.</span></div>' +
     '<div class="btn-row"><button class="btn btn-primary btn-block" id="introGo" type="button">Получить стартовый набор</button></div>'
   );
