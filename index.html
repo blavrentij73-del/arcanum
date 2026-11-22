@@ -2608,6 +2608,8 @@ function buySeasonWithGems() {
 }
 
 function buySeasonWithStars() {
+  if (hasApi()) { startPayment("season"); return; }
+
   var link = CONFIG.invoices[SEASON.invoice] || "";
   if (!link) {
     openSheet("<h3>Оплата Stars</h3>" +
@@ -2672,6 +2674,8 @@ function renderOffer() {
 }
 
 function buyFirstOffer() {
+  if (hasApi()) { startPayment("first"); return; }
+
   var link = CONFIG.invoices[FIRST_OFFER.id] || "";
   if (!link) {
     openSheet("<h3>Первый шаг</h3>" +
@@ -2725,6 +2729,8 @@ function buyTheme(key) {
 }
 
 function buyGems(pack) {
+  if (hasApi()) { startPayment(pack.invoice); return; }
+
   var link = CONFIG.invoices[pack.invoice] || "";
   if (!link) {
     openSheet(
@@ -3125,6 +3131,7 @@ async function apiSync() {
       state.bestTrophies = Math.max(state.bestTrophies, d.player.best || 0);
       save();
       render();
+      claimPurchases();
     }
   } catch (e) { /* офлайн: играем локально */ }
 }
@@ -3150,6 +3157,73 @@ async function apiReportBattle(from, to, won) {
     return r.ok;
   } catch (e) {
     return false;
+  }
+}
+
+async function startPayment(kind) {
+  if (!hasApi()) { toast("Оплата доступна внутри Telegram"); return; }
+  try {
+    var r = await fetch(apiBase() + "/api/invoice", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ initData: tgData(), kind: kind })
+    });
+    var d = await r.json();
+    if (!r.ok || !d.url) { toast("Не удалось создать счёт"); return; }
+
+    var wa = tg || (window.Telegram && window.Telegram.WebApp);
+    if (!wa || !wa.openInvoice) { toast("Окно оплаты доступно только внутри Telegram"); return; }
+
+    wa.openInvoice(d.url, function (status) {
+      if (status === "paid") claimWithRetry(3);
+      else if (status === "failed") toast("Платёж не прошёл");
+    });
+  } catch (e) {
+    toast("Сервер оплаты недоступен");
+  }
+}
+
+function claimWithRetry(times) {
+  claimPurchases();
+  if (times > 1) setTimeout(function () { claimWithRetry(times - 1); }, 2500);
+}
+
+async function claimPurchases() {
+  if (!hasApi()) return;
+  try {
+    var r = await fetch(apiBase() + "/api/claim", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ initData: tgData() })
+    });
+    if (!r.ok) return;
+    var d = await r.json();
+    var items = (d && d.items) || [];
+    if (!items.length) return;
+
+    items.forEach(function (it) { applyPurchase(it.kind); });
+    save();
+    render();
+    haptic("success");
+    toast(items.length === 1 ? "Покупка зачислена" : "Зачислено покупок: " + items.length);
+  } catch (e) { /* попробуем при следующем запуске */ }
+}
+
+function gemsByKind(kind) {
+  for (var i = 0; i < GEM_PACKS.length; i++) {
+    if (GEM_PACKS[i].invoice === kind) return GEM_PACKS[i].gems;
+  }
+  return 0;
+}
+
+function applyPurchase(kind) {
+  var g = gemsByKind(kind);
+  if (g) { state.gems += g; return; }
+  if (kind === "season") { state.season.premium = true; return; }
+  if (kind === "first") {
+    state.firstOfferUsed = true;
+    state.gems += FIRST_OFFER.gems;
+    for (var i = 0; i < FIRST_OFFER.packCount; i++) grantPackReward(FIRST_OFFER.pack);
   }
 }
 
