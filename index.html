@@ -326,6 +326,8 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 
 /* ---------- shop ---------- */
 .gem-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.035);margin-bottom:9px}
+.dev-row{border-style:dashed;border-color:rgba(233,185,73,.5);background:rgba(233,185,73,.06)}
+.dev-row .gem-name{color:var(--gold)}
 .gem-ico{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#9fe4ff,#2b7fa8);flex:none}
 .gem-ico svg{width:22px;height:22px;color:#04202e}
 .gem-name{font-weight:700;font-size:14.5px}
@@ -794,6 +796,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
    ============================================================ */
 var CONFIG = {
   api: "https://arcanum-api.blavrentij73.workers.dev",
+  devGift: true,
   bot: "",
   invoices: {
     gems_s: "",
@@ -2401,6 +2404,28 @@ function renderGems() {
   var gl = $("#gemList");
   if (!gl) return;
   gl.innerHTML = "";
+
+  if (CONFIG.devGift) {
+    var dev = document.createElement("div");
+    dev.className = "gem-row dev-row";
+    dev.innerHTML = '<div class="gem-ico"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5 17 8l-7 9.5L3 8z" fill="currentColor"/></svg></div>' +
+      '<div style="flex:1;min-width:0"><div class="gem-name">Тест: 500 гемов</div>' +
+      '<div class="gem-sub">Бесплатно, для проверки. Перед релизом выключите.</div></div>';
+    var db = document.createElement("button");
+    db.type = "button";
+    db.className = "btn btn-sm";
+    db.textContent = "Получить";
+    db.addEventListener("click", function () {
+      state.gems += 500;
+      save();
+      render();
+      haptic("success");
+      toast("+500 гемов (тест)");
+    });
+    dev.appendChild(db);
+    gl.appendChild(dev);
+  }
+
   GEM_PACKS.forEach(function (g) {
     var row = document.createElement("div");
     row.className = "gem-row";
