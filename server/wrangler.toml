@@ -8,7 +8,7 @@ APP_URL = "https://arcanum-79c.pages.dev"
 [[d1_databases]]
 binding = "DB"
 database_name = "arcanum"
-database_id = "e4c21c99-4b9e-44d2-b014-492fe7c6e208a"
+database_id = "e4c21c99-4b9e-44d2-b014-492fc7c6208a"
 
 [observability]
 enabled = true
