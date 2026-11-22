@@ -10,6 +10,7 @@ const WIN_MAX = 34;
 const LOSS_MAX = 20;
 
 const CATALOG = {
+  gems_xs: { title: "Искра — 1 гем", stars: 1, description: "Пробная покупка в Аркануме" },
   gems_s: { title: "120 гемов", stars: 75, description: "Пополнение коллекции Арканум" },
   gems_m: { title: "320 гемов", stars: 149, description: "Пополнение коллекции Арканум" },
   gems_l: { title: "800 гемов", stars: 299, description: "Пополнение коллекции Арканум" },
