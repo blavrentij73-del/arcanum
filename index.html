@@ -17,7 +17,7 @@
   --line:rgba(255,255,255,.075);
   --line2:rgba(255,255,255,.14);
   --text:#eef1ff;
-  --muted:#8b93b5;
+  --muted:#9aa3c6;
   --accent:#7c5cff;
   --accent-deep:#4a34c9;
   --gold:#e9b949;
@@ -97,7 +97,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .h1{font-size:27px;font-weight:820;letter-spacing:-.03em;line-height:1.1}
 .h2{font-size:18px;font-weight:750;letter-spacing:-.02em}
-.sub{color:var(--muted);font-size:13.5px}
+.sub{color:var(--muted);font-size:14px}
 .section{margin-top:22px}
 .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
 .link{background:none;border:0;color:var(--accent);font:inherit;font-size:13px;font-weight:650;cursor:pointer;padding:4px 0}
@@ -120,6 +120,8 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 .input{width:100%;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--text);font:inherit;font-size:15px}
 .input:focus{outline:none;border-color:var(--accent)}
 .avatar-picker{display:flex;gap:10px;margin-top:14px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:13.5px;font-weight:650}
+.toggle-row input{width:20px;height:20px;accent-color:#7c5cff}
 .av-choice{width:44px;height:44px;border-radius:50%;border:2px solid transparent;cursor:pointer;color:#fff;font-weight:800;font-size:15px;font-family:inherit;padding:0;text-shadow:0 2px 8px rgba(0,0,0,.35)}
 .av-choice.is-on{border-color:#fff;box-shadow:0 0 0 3px rgba(124,92,255,.35)}
 
@@ -197,12 +199,12 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 .card-art svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .card-foot{
   position:absolute;left:0;right:0;bottom:0;z-index:2;
-  display:flex;align-items:center;gap:6px;
-  padding:16px 8px 7px;
-  background:linear-gradient(to top,rgba(5,6,12,.95) 30%,rgba(5,6,12,.55) 68%,transparent);
+  display:flex;align-items:center;gap:5px;
+  padding:12px 7px 6px;
+  background:linear-gradient(to top,rgba(5,6,12,.97) 34%,rgba(5,6,12,.6) 72%,transparent);
 }
 .card-name{
-  font-size:10px;font-weight:680;line-height:1.15;letter-spacing:-.01em;
+  font-size:10.5px;font-weight:680;line-height:1.15;letter-spacing:-.01em;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
   overflow:hidden;flex:1;text-align:left;
 }
@@ -356,6 +358,10 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 .seg-btn{height:38px;border:0;border-radius:10px;background:none;color:var(--muted);font:inherit;font-size:13.5px;font-weight:650;cursor:pointer;transition:background .15s,color .15s}
 .seg-btn.is-on{background:var(--panel2);color:var(--text);box-shadow:0 4px 16px -10px #000}
 .seg-2{grid-template-columns:repeat(2,1fr)}
+.rules{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.rules div{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.35;color:var(--muted)}
+.rules b{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10.5px;font-weight:800;color:var(--text);background:rgba(124,92,255,.22);border:1px solid rgba(124,92,255,.4);margin-top:1px}
+.rules span{min-width:0}
 .seg-panel{margin-top:2px}
 
 /* ---------- season banner ---------- */
@@ -483,6 +489,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
   padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px);
   overflow:hidden;animation:fadeIn .2s ease;
 }
+.battle::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(620px 360px at 50% 14%,var(--fc,rgba(124,92,255,.5)) 0%,transparent 64%);opacity:.16}
 .battle-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px}
 .rival{display:flex;align-items:center;gap:9px;min-width:0}
 .rival-ava{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
@@ -513,8 +520,12 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 .dmg.crit{color:var(--gold);font-size:21px}
 .dmg.heal{color:#7ff0a8;font-size:14px;top:44%}
 @keyframes dmgFloat{0%{opacity:0;transform:translate(-50%,8px) scale(.85)}22%{opacity:1;transform:translate(-50%,-4px) scale(1.08)}100%{opacity:0;transform:translate(-50%,-40px) scale(1)}}
-.battle-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:0;padding:4px 0}
-.battle-vs{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(255,255,255,.2);font-weight:800}
+.battle-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:0;padding:6px 0}
+.battle-status{display:flex;align-items:center;justify-content:space-between;gap:10px;width:min(100%,420px,46vh);margin:10px auto 0}
+.turn-chip{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;padding:6px 12px;border-radius:99px;background:rgba(124,92,255,.18);border:1px solid rgba(124,92,255,.45);color:#cfc4ff;white-space:nowrap}
+.turn-chip.is-foe{background:rgba(255,93,108,.14);border-color:rgba(255,93,108,.42);color:#ffc2c8}
+.battle-score{font-size:13px;font-weight:800;color:rgba(255,255,255,.35);letter-spacing:.12em}
+.battle-score b{color:var(--text);font-size:15px;margin:0 2px}
 .battle-ticker{font-size:12.5px;line-height:1.45;color:var(--muted);text-align:center;max-width:32ch;min-height:2.9em}
 .battle-abilities{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:2px}
 .ab{min-height:32px;padding:0 12px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--text);font-size:12px;font-weight:700;font-family:inherit;transition:transform .15s ease,background .15s ease}
@@ -522,6 +533,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 .ab:disabled{opacity:.38}
 .ab:disabled:active{transform:none}
 .ab.is-armed{background:rgba(240,193,110,.16);border-color:rgba(240,193,110,.5);color:var(--gold)}
+.ab small{margin-left:4px;font-size:9.5px;font-weight:700;opacity:.55}
 .battle-charges{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.34);font-weight:700}
 .battle-skip{min-height:30px;font-size:12px;padding:0 12px;border-radius:10px;background:rgba(255,255,255,.06)}
 .battle-tools{display:flex;gap:6px;align-items:center;flex:none}
@@ -530,7 +542,9 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 .fighter.is-targetable{cursor:pointer;outline:1px dashed rgba(255,255,255,.16);outline-offset:4px;border-radius:8px}
 .fighter.is-focus{outline:2px solid var(--gold);outline-offset:4px;box-shadow:0 0 22px -8px var(--gold)}
 .battle-result{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;text-align:center;background:rgba(4,5,11,.88);backdrop-filter:blur(6px);animation:fadeIn .25s ease}
-.battle-result h3{font-size:30px;font-weight:820;letter-spacing:-.03em}
+.battle-result h3{font-size:30px;font-weight:820;letter-spacing:-.03em;animation:resultPop .45s cubic-bezier(.2,.9,.25,1.1) both}
+@keyframes resultPop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+.battle-result .result-foe,.battle-result .battle-trophy,.battle-result .battle-stats{animation:fadeIn .45s .1s both}
 .battle-result.win h3{color:var(--ok);text-shadow:0 0 40px rgba(74,222,128,.35)}
 .battle-result.lose h3{color:#ff8a95}
 .battle-result p{color:var(--muted);font-size:14px;margin-bottom:10px}
@@ -598,7 +612,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 
       <div class="hero" style="padding-top:14px">
         <h1 class="h1">Собери Арканум</h1>
-        <p class="sub">Пятьдесят карт, пять фракций. Каждая дуэль приближает к полному своду.</p>
+        <p class="sub">Соберите трёх бойцов, выйдите на арену и сносите карты соперника. Победы поднимают кубки, наборы добавляют карты.</p>
       </div>
 
       <div class="panel progress-card">
@@ -653,8 +667,8 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
       <div class="section">
         <div class="section-head"><h2 class="h2">Быстрый старт</h2></div>
         <div class="btn-row" style="margin-top:0">
-          <button class="btn btn-primary" id="quickPack" type="button">Открыть набор</button>
-          <button class="btn" id="quickDuel" type="button">На арену</button>
+          <button class="btn btn-primary" id="quickDuel" type="button">Играть</button>
+          <button class="btn" id="quickPack" type="button">Открыть набор</button>
         </div>
       </div>
 
@@ -751,6 +765,11 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
         <div class="seg seg-2" id="modeSeg">
           <button class="seg-btn" data-mode="bot" type="button">Тренировка</button>
           <button class="seg-btn" data-mode="live" type="button">Живая арена</button>
+        </div>
+        <div class="rules">
+          <div><b>1</b><span>Тапните по карте соперника — ударит ваш передний боец.</span></div>
+          <div><b>2</b><span>Три приёма на бой: натиск, щит, лечение.</span></div>
+          <div><b>3</b><span>Снесите все три карты — победа и кубки.</span></div>
         </div>
       </div>
       <div class="section" style="margin-top:16px">
@@ -1079,9 +1098,11 @@ var DEFAULTS = {
   streak: 0,
   lastDaily: null,
   theme: "amethyst",
+  sound: true,
   themes: { amethyst: true },
   seenIntro: false,
   firstOfferUsed: false,
+  offerReady: false,
   factionRewards: {},
   season: { xp: 0, premium: false, claimedFree: [], claimedPaid: [] },
   stats: { packs: 0, duels: 0, wins: 0 }
@@ -1155,6 +1176,54 @@ function mulberry32(a) {
 }
 
 var tg = null;
+var audioCtx = null;
+function sfx(kind) {
+  if (!state.sound) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var t = audioCtx.currentTime;
+    var o = audioCtx.createOscillator();
+    var g = audioCtx.createGain();
+    o.connect(g);
+    g.connect(audioCtx.destination);
+    if (kind === "tap") {
+      o.type = "triangle";
+      o.frequency.setValueAtTime(520, t);
+      g.gain.setValueAtTime(.05, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + .07);
+      o.start(t); o.stop(t + .08);
+    } else if (kind === "crit") {
+      o.type = "sawtooth";
+      o.frequency.setValueAtTime(340, t);
+      o.frequency.exponentialRampToValueAtTime(120, t + .16);
+      g.gain.setValueAtTime(.07, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + .18);
+      o.start(t); o.stop(t + .19);
+    } else if (kind === "win") {
+      o.type = "triangle";
+      o.frequency.setValueAtTime(523, t);
+      o.frequency.setValueAtTime(784, t + .13);
+      g.gain.setValueAtTime(.06, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + .36);
+      o.start(t); o.stop(t + .37);
+    } else if (kind === "lose") {
+      o.type = "sine";
+      o.frequency.setValueAtTime(240, t);
+      o.frequency.exponentialRampToValueAtTime(110, t + .3);
+      g.gain.setValueAtTime(.06, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + .34);
+      o.start(t); o.stop(t + .35);
+    } else {
+      o.type = "square";
+      o.frequency.setValueAtTime(190, t);
+      o.frequency.exponentialRampToValueAtTime(90, t + .08);
+      g.gain.setValueAtTime(.06, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + .1);
+      o.start(t); o.stop(t + .11);
+    }
+  } catch (e) { /* звук недоступен */ }
+}
+
 function haptic(kind) {
   try {
     if (!tg || !tg.HapticFeedback) return;
@@ -1167,15 +1236,6 @@ function haptic(kind) {
    Процедурный арт карт
    ============================================================ */
 var artSeq = 0;
-
-function polyPoints(cx, cy, r, sides, rot) {
-  var pts = [];
-  for (var i = 0; i < sides; i++) {
-    var a = (rot + (i * 360) / sides) * Math.PI / 180;
-    pts.push((cx + Math.cos(a) * r).toFixed(2) + "," + (cy + Math.sin(a) * r).toFixed(2));
-  }
-  return pts.join(" ");
-}
 
 function sigil(card) {
   var u = "a" + (++artSeq);
@@ -1218,14 +1278,20 @@ function sigil(card) {
   // ядро свечения
   out += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (20 + rnd() * 4) + '" fill="' + col + '" opacity=".22" filter="url(#' + u + 'blur)"/>';
 
-  // кольца
-  var rings = 3 + (card.rarity === "mythic" ? 1 : 0);
-  for (i = 0; i < rings; i++) {
-    var r = 26 - i * 6 + rnd() * 3;
-    var sides = [3, 4, 5, 6][Math.floor(rnd() * 4)];
-    var rot = rnd() * 360;
-    out += '<polygon points="' + polyPoints(cx, cy, r, sides, rot) + '" fill="none" stroke="' + col +
-      '" stroke-opacity="' + (0.3 - i * 0.07).toFixed(2) + '" stroke-width="' + Math.max(0.4, 1.2 - i * 0.22).toFixed(2) + '"/>';
+  // печать: круг с руническими штрихами
+  var ringR = 22 + rnd() * 2;
+  out += '<circle cx="' + cx + '" cy="' + cy + '" r="' + ringR.toFixed(1) + '" fill="none" stroke="' + col +
+    '" stroke-opacity=".28" stroke-width="0.7"/>';
+  out += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (ringR - 4.5).toFixed(1) + '" fill="none" stroke="' + col +
+    '" stroke-opacity=".15" stroke-width="0.6"/>';
+  var ticks = 10 + (card.rarity === "mythic" ? 4 : 0);
+  for (i = 0; i < ticks; i++) {
+    a = (i * (360 / ticks) + rnd() * 3) * Math.PI / 180;
+    var t1 = ringR + 1.4, t2 = ringR + 2.4 + rnd() * 2.4;
+    out += '<line x1="' + (cx + Math.cos(a) * t1).toFixed(2) + '" y1="' + (cy + Math.sin(a) * t1).toFixed(2) +
+      '" x2="' + (cx + Math.cos(a) * t2).toFixed(2) + '" y2="' + (cy + Math.sin(a) * t2).toFixed(2) +
+      '" stroke="' + col + '" stroke-width="0.8" stroke-linecap="round" stroke-opacity="' +
+      (0.3 + rnd() * 0.35).toFixed(2) + '"/>';
   }
 
   // ореол мотива
@@ -1704,6 +1770,8 @@ function openProfile() {
       initialOf(name) + "</button>";
   }
   html += "</div>" +
+    '<label class="toggle-row"><span>Звук в бою</span><input type="checkbox" id="soundToggle"' +
+    (state.sound ? " checked" : "") + "></label>" +
     '<div class="btn-row"><button class="btn btn-primary btn-block" id="saveProfile" type="button">Сохранить</button></div>';
 
   openSheet(html);
@@ -1716,6 +1784,13 @@ function openProfile() {
         x.classList.toggle("is-on", x === b);
       });
     });
+  });
+
+  var soundToggle = $("#soundToggle");
+  if (soundToggle) soundToggle.addEventListener("change", function () {
+    state.sound = soundToggle.checked;
+    save();
+    if (state.sound) sfx("tap");
   });
 
   var saveBtn = $("#saveProfile");
@@ -2252,8 +2327,8 @@ function makeBattle(myCards, enemyCards, boost, rival) {
     ai: 0, bi: 0, turn: 0, guard: 0,
     over: false, won: false,
     rival: rival || makeRival(),
-    charges: 3, boost: false, guardNext: false,
-    foe: { focus: -1, charges: 3, boost: false, guardNext: false, used: "" },
+    energy: 2, boost: false, guardNext: false,
+    foe: { focus: -1, energy: 2, boost: false, guardNext: false, used: "" },
     stats: { dealt: 0, taken: 0, crits: 0, rounds: 0, bySlot: [0, 0, 0] }
   };
 }
@@ -2310,20 +2385,20 @@ function stepBattle(b, focus) {
     if (!(b.foe.focus >= 0 && b.A[b.foe.focus] && b.A[b.foe.focus].hp > 0)) b.foe.focus = pickFoeTarget(b);
     defender = b.A[b.foe.focus] || b.A[b.ai];
 
-    if (b.foe.charges > 0) {
+    if (b.foe.energy >= 1) {
       var kill = defender.hp <= attacker.atk * 1.25;
-      if (kill) {
+      if (kill && b.foe.energy >= 2) {
         b.foe.boost = true;
-        b.foe.charges--;
+        b.foe.energy -= 2;
         b.foe.used = "boost";
-      } else if (attacker.hp < attacker.maxHp * 0.55) {
+      } else if (attacker.hp < attacker.maxHp * 0.55 && b.foe.energy >= 2) {
         var amount = Math.round(attacker.maxHp * 0.2);
         attacker.hp = Math.min(attacker.maxHp, attacker.hp + amount);
-        b.foe.charges--;
+        b.foe.energy -= 2;
         b.foe.used = "heal:" + amount;
       } else if (!b.foe.guardNext && Math.random() < 0.2) {
         b.foe.guardNext = true;
-        b.foe.charges--;
+        b.foe.energy -= 1;
         b.foe.used = "guard";
       }
     }
@@ -2335,10 +2410,13 @@ function stepBattle(b, focus) {
 
   var boostHit = false;
   var guardHit = false;
-  if (attacker.side === "a" && b.boost) { mult *= 1.6; b.boost = false; boostHit = true; }
-  if (defender.side === "a" && b.guardNext) { mult *= 0.4; b.guardNext = false; guardHit = true; }
-  if (attacker.side === "b" && b.foe.boost) { mult *= 1.6; b.foe.boost = false; boostHit = true; }
-  if (defender.side === "b" && b.foe.guardNext) { mult *= 0.4; b.foe.guardNext = false; guardHit = true; }
+  if (attacker.side === "a" && b.boost) { b.boost = false; boostHit = true; }
+  if (defender.side === "a" && b.guardNext) { b.guardNext = false; guardHit = true; }
+  if (attacker.side === "b" && b.foe.boost) { b.foe.boost = false; boostHit = true; }
+  if (defender.side === "b" && b.foe.guardNext) { b.foe.guardNext = false; guardHit = true; }
+
+  if (boostHit) mult *= 1.6;
+  if (guardHit) mult *= boostHit ? 1 : 0.4;
 
   var dmg = attacker.atk * mult * (0.9 + Math.random() * 0.2);
   var crit = Math.random() < 0.12;
@@ -2436,6 +2514,8 @@ function playBattle(b, onFinish) {
   return new Promise(function (resolve) {
     var overlay = document.createElement("div");
     overlay.className = "battle";
+    var foeTop = b.B.slice().sort(function (x, y) { return y.card.power - x.card.power; })[0];
+    if (foeTop) overlay.style.setProperty("--fc", FACTIONS[foeTop.card.faction].color);
     overlay.innerHTML =
       '<div class="battle-head">' +
         '<div class="rival"><span class="rival-ava av-' + (b.rival.avatar || 0) + '">' +
@@ -2448,19 +2528,33 @@ function playBattle(b, onFinish) {
         "</div></div>" +
       '<div class="battle-row" data-side="b"></div>' +
       '<div class="battle-hint">Тапните врага — будете бить его первым</div>' +
-      '<div class="battle-mid"><div class="battle-vs">дуэль</div><div class="battle-ticker">Противники сходятся</div>' +
-      '<div class="battle-abilities">' +
-        '<button class="ab" data-ab="boost" type="button">Натиск</button>' +
-        '<button class="ab" data-ab="guard" type="button">Щит</button>' +
-        '<button class="ab" data-ab="heal" type="button">Лечение</button>' +
+      '<div class="battle-status">' +
+        '<span class="turn-chip" id="turnChip">Ваш ход</span>' +
+        '<span class="battle-score"><b id="scoreA">3</b>:<b id="scoreB">3</b></span>' +
       '</div>' +
-      '<div class="battle-charges">Заряды: 3</div></div>' +
+      '<div class="battle-mid">' +
+        '<div class="battle-ticker">Снесите все три карты соперника</div>' +
+        '<div class="battle-abilities">' +
+        '<button class="ab" data-ab="boost" type="button">Натиск<small>2</small></button>' +
+        '<button class="ab" data-ab="guard" type="button">Щит<small>1</small></button>' +
+        '<button class="ab" data-ab="heal" type="button">Лечение<small>2</small></button>' +
+      '</div>' +
+      '<div class="battle-charges">Энергия 2 / 5</div></div>' +
       '<div class="battle-bottom"><div class="battle-row" data-side="a"></div><div class="battle-label">Твой отряд</div></div>';
 
     var aRow = overlay.querySelector('.battle-row[data-side="a"]');
     var bRow = overlay.querySelector('.battle-row[data-side="b"]');
     var ticker = overlay.querySelector(".battle-ticker");
     var hint = overlay.querySelector(".battle-hint");
+    var chip = overlay.querySelector("#turnChip");
+    var scoreA = overlay.querySelector("#scoreA");
+    var scoreB = overlay.querySelector("#scoreB");
+
+    function aliveCount(arr) { return arr.filter(function (f) { return f.hp > 0; }).length; }
+    function updateScore() {
+      if (scoreA) scoreA.textContent = aliveCount(b.A);
+      if (scoreB) scoreB.textContent = aliveCount(b.B);
+    }
 
     var aNodes = b.A.map(function (f) { var n = fighterNode(f.card, "a", f.slot); aRow.appendChild(n); return n; });
     var bNodes = b.B.map(function (f) { var n = fighterNode(f.card, "b", f.slot); bRow.appendChild(n); return n; });
@@ -2497,6 +2591,7 @@ function playBattle(b, onFinish) {
         setFocus(idx);
         resolveAction();
         haptic("light");
+        sfx("tap");
       });
     });
 
@@ -2507,17 +2602,19 @@ function playBattle(b, onFinish) {
 
     var abBtns = Array.prototype.slice.call(overlay.querySelectorAll(".ab"));
     var chargesEl = overlay.querySelector(".battle-charges");
+    var AB_COST = { boost: 2, guard: 1, heal: 2 };
 
     function canHeal() {
       return b.A.some(function (f) { return f.hp > 0 && f.hp < f.maxHp; });
     }
 
     function updateAbilities() {
-      chargesEl.textContent = "Заряды: " + b.charges;
+      chargesEl.textContent = "Энергия " + b.energy + " / 5";
       abBtns.forEach(function (btn) {
         var kind = btn.dataset.ab;
+        var cost = AB_COST[kind] || 1;
         var armed = (kind === "boost" && b.boost) || (kind === "guard" && b.guardNext);
-        btn.disabled = b.over || b.charges <= 0 || armed || (kind === "heal" && !canHeal());
+        btn.disabled = b.over || b.energy < cost || armed || (kind === "heal" && !canHeal());
         btn.classList.toggle("is-armed", armed);
       });
     }
@@ -2537,7 +2634,8 @@ function playBattle(b, onFinish) {
     }
 
     function useAbility(kind) {
-      if (b.over || b.charges <= 0) return;
+      var cost = AB_COST[kind] || 1;
+      if (b.over || b.energy < cost) return;
       if (kind === "boost") {
         if (b.boost) return;
         b.boost = true;
@@ -2547,7 +2645,7 @@ function playBattle(b, onFinish) {
       } else if (kind === "heal") {
         if (!healTeam()) return;
       }
-      b.charges--;
+      b.energy -= cost;
       haptic("medium");
       updateAbilities();
     }
@@ -2647,6 +2745,7 @@ function playBattle(b, onFinish) {
       box.appendChild(btn);
       overlay.appendChild(box);
       haptic(b.won ? "success" : "warning");
+      sfx(b.won ? "win" : "lose");
     }
 
     function markAim(slot, on) {
@@ -2681,16 +2780,20 @@ function playBattle(b, onFinish) {
     (async function run() {
       while (!b.over) {
         var side = b.turn % 2 === 0 ? "a" : "b";
+        if (side === "a") b.energy = Math.min(5, b.energy + 1);
+        else b.foe.energy = Math.min(5, b.foe.energy + 1);
 
         if (side === "a") {
+          if (chip) { chip.textContent = "Ваш ход"; chip.classList.remove("is-foe"); }
           if (auto || skipped) {
-            if (hint) hint.textContent = "Ваш ход";
+            if (hint) hint.textContent = "Авто играет за вас";
             if (!skipped) await sleep(700 + Math.random() * 500);
           } else {
-            if (hint) hint.textContent = "Ваш ход — тапните врага";
+            if (hint) hint.textContent = "Тапните по карте, чтобы ударить";
             await waitAction();
           }
         } else {
+          if (chip) { chip.textContent = "Ход соперника"; chip.classList.add("is-foe"); }
           if (hint) hint.textContent = b.rival.name + " думает…";
           if (!skipped) await sleep(paced ? 1500 + Math.random() * 900 : 520 + Math.random() * 300);
         }
@@ -2708,6 +2811,7 @@ function playBattle(b, onFinish) {
             }
             hadHit = true;
             paint(ev, !skipped);
+            sfx(ev.crit ? "crit" : "hit");
             markAim(ev.aSlot, false);
             ticker.textContent = ev.text;
             var fb = foeLine(ev.foeUsed);
@@ -2721,6 +2825,7 @@ function playBattle(b, onFinish) {
         }
 
         if (!skipped) await sleep(hadHit ? 380 : 260);
+        updateScore();
         updateAbilities();
       }
       finish();
@@ -2760,10 +2865,12 @@ async function startBattle() {
   renderDuel();
 
   var live = state.mode === "live";
+  var found = null;
   if (live) {
     var btn = $("#fightBtn");
     if (btn) btn.textContent = "Ищем соперника…";
-    await sleep(1400 + Math.random() * 1600);
+    found = await apiMatch();
+    if (!found) await sleep(1100 + Math.random() * 900);
   }
 
   var myPower = mine.reduce(function (s, c) { return s + c.power; }, 0) / mine.length;
@@ -2777,18 +2884,26 @@ async function startBattle() {
   pool = pool.slice();
 
   var enemies = [];
+  if (found && Array.isArray(found.team)) {
+    found.team.forEach(function (cid) {
+      var card = CARDS.find(function (c) { return c.id === cid; });
+      if (card && enemies.length < 3) enemies.push(card);
+    });
+  }
   while (enemies.length < 3 && pool.length) {
     enemies.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
   }
 
-  var rival = pendingRival || makeRival();
-  rival.fallback = live;
+  var rival = found
+    ? { name: found.name || "Соперник", trophies: found.trophies || 0, avatar: Math.floor(Math.random() * 4), fallback: false }
+    : (pendingRival || makeRival());
+  if (!found && live) rival.fallback = true;
   pendingRival = null;
 
   var boost = 0.72 + state.level * 0.075;
   var battle = makeBattle(mine, enemies, boost, rival);
   battle.paced = live;
-  if (live) toast("Живых игроков не нашлось — тренировочный бой");
+  if (live) toast(found ? "Соперник найден: " + rival.name : "Живых игроков не нашлось — тренировочный бой");
 
   var reward = await playBattle(battle, function (won) {
     var from = state.trophies;
@@ -2850,6 +2965,12 @@ async function startBattle() {
   battleRunning = false;
   save();
   render();
+
+  if (!reward.won && !state.offerReady) {
+    state.offerReady = true;
+    save();
+    setTimeout(showFirstOffer, 700);
+  }
 }
 
 /* ---------- магазин ---------- */
@@ -2990,6 +3111,14 @@ function renderSeason() {
 
   var buy = $("#seasonBuy");
   buy.innerHTML = "";
+  var pay = { gems: 0, coins: 0, shards: 0, packs: 0 };
+  SEASON.rewards.forEach(function (r) {
+    var p = r.paid;
+    if (p.t === "gems") pay.gems += p.v;
+    else if (p.t === "coins") pay.coins += p.v;
+    else if (p.t === "shards") pay.shards += p.v;
+    else if (p.t === "pack") pay.packs++;
+  });
   if (!state.season.premium) {
     var b = document.createElement("button");
     b.type = "button";
@@ -3001,7 +3130,8 @@ function renderSeason() {
     var note = document.createElement("p");
     note.className = "sub";
     note.style.cssText = "font-size:12px;margin-top:8px";
-    note.textContent = "Премиум-ветка удваивает награды: на каждом уровне открывается вторая. Можно оплатить Stars или " + SEASON.priceGems + " гемами.";
+    note.textContent = "Премиум-ветка: " + pay.gems + " гемов, " + pay.coins + " монет, " +
+      pay.shards + " осколков и " + pay.packs + " набора за 15 уровней. Оплата Stars или " + SEASON.priceGems + " гемами.";
     buy.appendChild(note);
   } else {
     var ok = document.createElement("p");
@@ -3126,11 +3256,22 @@ function renderSeasonBanner() {
     : (lvl === 0 ? "Дуэли и наборы дают XP сезона" : "Следующая награда на уровне " + Math.min(lvl + 1, SEASON.levels));
 }
 
+function showFirstOffer() {
+  if (state.firstOfferUsed) return;
+  openSheet("<h3>Первый шаг</h3>" +
+    '<p class="sub">Первый бой — всегда проигрышный. ' + FIRST_OFFER.gems + " гемов и " +
+    FIRST_OFFER.packCount + " редких набора разово за " + FIRST_OFFER.stars + " Stars.</p>" +
+    '<div class="btn-row"><button class="btn btn-primary btn-block" id="offerTake" type="button">Взять</button></div>' +
+    '<div class="btn-row" style="margin-top:8px"><button class="btn btn-block" data-close="" type="button">Позже</button></div>');
+  var t = $("#offerTake");
+  if (t) t.addEventListener("click", function () { closeSheet(); buyFirstOffer(); });
+}
+
 function renderOffer() {
   var slot = $("#offerSlot");
   if (!slot) return;
   slot.innerHTML = "";
-  if (state.firstOfferUsed) return;
+  if (!state.offerReady || state.firstOfferUsed) return;
 
   var wrap = document.createElement("div");
   wrap.className = "pack";
@@ -3613,6 +3754,7 @@ async function apiSync() {
       body: JSON.stringify({
         initData: tgData(),
         trophies: state.trophies,
+        team: teamCards().map(function (c) { return c.id; }),
         name: (state.profile && state.profile.name ? state.profile.name : "").trim()
       })
     });
@@ -3626,6 +3768,25 @@ async function apiSync() {
       claimPurchases();
     }
   } catch (e) { /* офлайн: играем локально */ }
+}
+
+async function apiMatch() {
+  if (!hasApi()) return null;
+  try {
+    var r = await fetch(apiBase() + "/api/match", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        initData: tgData(),
+        team: teamCards().map(function (c) { return c.id; })
+      })
+    });
+    if (!r.ok) return null;
+    var d = await r.json();
+    return d && d.opponent ? d.opponent : null;
+  } catch (e) {
+    return null;
+  }
 }
 
 async function apiReportBattle(from, to, won) {
@@ -3772,9 +3933,13 @@ function boot() {
 
 function showIntro() {
   openSheet(
-    "<h3>Добро пожаловать в Арканум</h3>" +
-    '<p class="sub">Пятьдесят карт, пять фракций и арена три на три. Начни с бесплатного набора — и свод откроется.</p>' +
-    '<div class="trait-box"><b>Как это работает</b><span>Открывай наборы за монеты, собирай фракции, крафти недостающие карты за осколки. Повторы автоматически превращаются в осколки.</span></div>' +
+    "<h3>Как играть</h3>" +
+    '<p class="sub">Дуэль три на три. Побеждает тот, кто снесёт все карты соперника.</p>' +
+    '<div class="rules">' +
+      "<div><b>1</b><span>В наборе выпадают карты. Поставьте трёх бойцов в отряд на арене.</span></div>" +
+      "<div><b>2</b><span>Ваш ход: тапните по карте соперника — ударит ваш передний боец.</span></div>" +
+      "<div><b>3</b><span>Три приёма на бой: натиск, щит, лечение. Победа даёт кубки.</span></div>" +
+    "</div>" +
     '<div class="btn-row"><button class="btn btn-primary btn-block" id="introGo" type="button">Получить стартовый набор</button></div>'
   );
   var go = $("#introGo");
