@@ -225,6 +225,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
 .card-faction{position:absolute;top:6px;left:6px;z-index:2;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;background:rgba(5,6,12,.62);border:1px solid rgba(255,255,255,.14)}
 .card-faction svg{width:10px;height:10px}
 .card-gem{position:absolute;top:10px;right:9px;z-index:2;width:6px;height:6px;transform:rotate(45deg);background:#9aa3c4;box-shadow:0 0 8px #9aa3c4}
+.card-lvl{position:absolute;top:21px;right:7px;z-index:2;font-size:8.5px;font-weight:800;letter-spacing:.02em;padding:1px 4px;border-radius:5px;background:rgba(233,185,73,.2);border:1px solid rgba(233,185,73,.5);color:var(--gold)}
 .card[data-r="rare"] .card-gem{background:#58a6ff;box-shadow:0 0 8px #58a6ff}
 .card[data-r="epic"] .card-gem{background:#b06cff;box-shadow:0 0 9px #b06cff}
 .card[data-r="legendary"] .card-gem{background:#e9b949;box-shadow:0 0 10px #e9b949}
@@ -743,7 +744,7 @@ main{flex:1;padding:2px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 2
       <div class="hero" style="padding-top:8px">
         <p class="eyebrow">Свод</p>
         <h1 class="h1" id="collTitle">Коллекция</h1>
-        <p class="sub" id="collSub">0 из 50 карт</p>
+        <p class="sub" id="collSub">0 из 120 карт</p>
       </div>
       <div class="filters" id="factionFilters" role="tablist" aria-label="Фильтр по фракциям"></div>
       <div class="filter-row">
@@ -1006,7 +1007,82 @@ var CARDS = [
   { id: "wi-7", name: "Терновник",          faction: "wild",   rarity: "common",    power: 14, trait: "burst", flavor: "Колючий без злобы." },
   { id: "wi-8", name: "Пчелиный рой",       faction: "wild",   rarity: "rare",      power: 20, trait: "swift", flavor: "Одна воля на сотню тел." },
   { id: "wi-9", name: "Древо-пастух",       faction: "wild",   rarity: "epic",      power: 39, trait: "guard", flavor: "Считает овец веками." },
-  { id: "wi-10", name: "Первый росток",     faction: "wild",   rarity: "mythic",    power: 84, trait: "drain", flavor: "До него был только камень." }
+  { id: "wi-10", name: "Первый росток",     faction: "wild",   rarity: "mythic",    power: 84, trait: "drain", flavor: "До него был только камень." },
+
+  { id: "fl-11", name: "Угольный пёс",      faction: "flame",  rarity: "common",    power: 12, trait: "burst", flavor: "Грызёт головни, чтобы не остыть." },
+  { id: "fl-12", name: "Смоляной",          faction: "flame",  rarity: "common",    power: 14, trait: "guard", flavor: "Течёт медленно, держит крепко." },
+  { id: "fl-13", name: "Головня",           faction: "flame",  rarity: "common",    power: 11, trait: "none",  flavor: "Ещё дымится — значит, живой." },
+  { id: "fl-14", name: "Искровик",          faction: "flame",  rarity: "common",    power: 13, trait: "swift", flavor: "Сыплет искрами вместо слов." },
+  { id: "fl-15", name: "Костровой",         faction: "flame",  rarity: "common",    power: 10, trait: "guard", flavor: "Вокруг него всегда собираются." },
+  { id: "fl-16", name: "Жаркий уголь",      faction: "flame",  rarity: "common",    power: 15, trait: "burst", flavor: "Тлеет так, что плавит сталь." },
+  { id: "fl-17", name: "Огневик",           faction: "flame",  rarity: "rare",      power: 21, trait: "burst", flavor: "Пляшет на углях, не сходя с места." },
+  { id: "fl-18", name: "Пламенный клинок",  faction: "flame",  rarity: "rare",      power: 25, trait: "swift", flavor: "Раскалён до цвета зари." },
+  { id: "fl-19", name: "Дымный занавес",    faction: "flame",  rarity: "rare",      power: 22, trait: "guard", flavor: "Сквозь него не видно ни зги." },
+  { id: "fl-20", name: "Тлеющий идол",      faction: "flame",  rarity: "rare",      power: 26, trait: "burst", flavor: "Ему молятся те, кто боится темноты." },
+  { id: "fl-21", name: "Пепельная дева",    faction: "flame",  rarity: "epic",      power: 36, trait: "drain", flavor: "Её слёзы прожигают камень." },
+  { id: "fl-22", name: "Раскалённый колосс", faction: "flame", rarity: "epic",      power: 42, trait: "guard", flavor: "Шаг — и земля стекленеет под ногами." },
+  { id: "fl-23", name: "Факел Небес",       faction: "flame",  rarity: "legendary", power: 58, trait: "burst", flavor: "Его зажигали только раз." },
+  { id: "fl-24", name: "Саламандра",        faction: "flame",  rarity: "mythic",    power: 90, trait: "drain", flavor: "Родилась в горне, в нём же и останется." },
+
+  { id: "fr-11", name: "Стужень",           faction: "frost",  rarity: "common",    power: 12, trait: "guard", flavor: "Морозит аккуратно, по чуть-чуть." },
+  { id: "fr-12", name: "Сосулька",          faction: "frost",  rarity: "common",    power: 10, trait: "swift", flavor: "Падает без предупреждения." },
+  { id: "fr-13", name: "Полярная сова",     faction: "frost",  rarity: "common",    power: 13, trait: "none",  flavor: "Видит в темноте и в метели." },
+  { id: "fr-14", name: "Гололёд",           faction: "frost",  rarity: "common",    power: 11, trait: "guard", flavor: "Подводит даже самых уверенных." },
+  { id: "fr-15", name: "Морозный заяц",     faction: "frost",  rarity: "common",    power: 14, trait: "swift", flavor: "Убегает быстрее, чем тает." },
+  { id: "fr-16", name: "Ледяной ёж",        faction: "frost",  rarity: "common",    power: 15, trait: "guard", flavor: "Колюч, пока не отогреется." },
+  { id: "fr-17", name: "Метель",            faction: "frost",  rarity: "rare",      power: 20, trait: "swift", flavor: "Идёт стеной, не разбирая дороги." },
+  { id: "fr-18", name: "Ледяной панцирь",   faction: "frost",  rarity: "rare",      power: 24, trait: "guard", flavor: "Пронзить можно только изнутри." },
+  { id: "fr-19", name: "Снежный барс",      faction: "frost",  rarity: "rare",      power: 26, trait: "swift", flavor: "Прыжок — и следов не остаётся." },
+  { id: "fr-20", name: "Иней-плеть",        faction: "frost",  rarity: "rare",      power: 22, trait: "burst", flavor: "Оставляет узоры на всём, что живо." },
+  { id: "fr-21", name: "Морозный великан",  faction: "frost",  rarity: "epic",      power: 40, trait: "guard", flavor: "Спит стоя, просыпается от тепла." },
+  { id: "fr-22", name: "Ледолом",           faction: "frost",  rarity: "epic",      power: 35, trait: "burst", flavor: "Крошит лёд и всё, что под ним." },
+  { id: "fr-23", name: "Хранитель Стыни",   faction: "frost",  rarity: "legendary", power: 60, trait: "guard", flavor: "Стережёт то, что не должно оттаять." },
+  { id: "fr-24", name: "Сердце Зимы",       faction: "frost",  rarity: "mythic",    power: 86, trait: "drain", flavor: "Коснёшься — и остановится всё." },
+
+  { id: "wi-11", name: "Мшистый",           faction: "wild",   rarity: "common",    power: 12, trait: "guard", flavor: "Тише камня, старше камня." },
+  { id: "wi-12", name: "Ядовитый побег",    faction: "wild",   rarity: "common",    power: 11, trait: "burst", flavor: "Тянется к солнцу по чужим следам." },
+  { id: "wi-13", name: "Лесной ёж",         faction: "wild",   rarity: "common",    power: 13, trait: "swift", flavor: "Шуршит там, куда ты не смотришь." },
+  { id: "wi-14", name: "Волчий корень",     faction: "wild",   rarity: "common",    power: 14, trait: "none",  flavor: "Корень в форме зверя. Не спрашивай." },
+  { id: "wi-15", name: "Папоротник",        faction: "wild",   rarity: "common",    power: 10, trait: "guard", flavor: "Растёт всюду, где нечего жечь." },
+  { id: "wi-16", name: "Травяная плеть",    faction: "wild",   rarity: "common",    power: 15, trait: "swift", flavor: "Одно движение — и ты уже в траве." },
+  { id: "wi-17", name: "Древесный лик",     faction: "wild",   rarity: "rare",      power: 23, trait: "guard", flavor: "Кора помнит все топоры." },
+  { id: "wi-18", name: "Рой ос",            faction: "wild",   rarity: "rare",      power: 20, trait: "swift", flavor: "Один укус — и уже поздно." },
+  { id: "wi-19", name: "Каменный клубень",  faction: "wild",   rarity: "rare",      power: 26, trait: "guard", flavor: "Его нельзя выкопать, только обойти." },
+  { id: "wi-20", name: "Топь",              faction: "wild",   rarity: "rare",      power: 22, trait: "drain", flavor: "Затягивает медленно и вежливо." },
+  { id: "wi-21", name: "Лесной дух",        faction: "wild",   rarity: "epic",      power: 38, trait: "drain", flavor: "Смотрит из-за каждого ствола." },
+  { id: "wi-22", name: "Зверь-великан",     faction: "wild",   rarity: "epic",      power: 42, trait: "burst", flavor: "Ломает деревья, не замечая." },
+  { id: "wi-23", name: "Корень Мира",       faction: "wild",   rarity: "legendary", power: 56, trait: "guard", flavor: "Один корень держит целый лес." },
+  { id: "wi-24", name: "Ходячий лес",       faction: "wild",   rarity: "mythic",    power: 88, trait: "guard", flavor: "Не карта. Место, где ты уже потерялся." },
+
+  { id: "li-11", name: "Луч",               faction: "light",  rarity: "common",    power: 12, trait: "swift", flavor: "Попадает точно, светит не всем." },
+  { id: "li-12", name: "Пылинка",           faction: "light",  rarity: "common",    power: 10, trait: "none",  flavor: "В её свете видно больше, чем хочется." },
+  { id: "li-13", name: "Свеча",             faction: "light",  rarity: "common",    power: 11, trait: "guard", flavor: "Горит, пока о ней помнят." },
+  { id: "li-14", name: "Утренник",          faction: "light",  rarity: "common",    power: 13, trait: "burst", flavor: "Встаёт раньше всех." },
+  { id: "li-15", name: "Перо зари",         faction: "light",  rarity: "common",    power: 14, trait: "swift", flavor: "Золотится на ветру." },
+  { id: "li-16", name: "Ясноликий",         faction: "light",  rarity: "common",    power: 15, trait: "none",  flavor: "Одно лицо на все рассветы." },
+  { id: "li-17", name: "Зерцало",           faction: "light",  rarity: "rare",      power: 24, trait: "guard", flavor: "Возвращает любую атаку и любой взгляд." },
+  { id: "li-18", name: "Рассветный клинок", faction: "light",  rarity: "rare",      power: 26, trait: "burst", flavor: "Луч, которому дали рукоять." },
+  { id: "li-19", name: "Светоносный",       faction: "light",  rarity: "rare",      power: 21, trait: "drain", flavor: "Его свет лечит своих." },
+  { id: "li-20", name: "Плащ зари",         faction: "light",  rarity: "rare",      power: 22, trait: "none",  flavor: "Тени под ним не бывает." },
+  { id: "li-21", name: "Небесный вестник",  faction: "light",  rarity: "epic",      power: 38, trait: "swift", flavor: "Приносит новости, которых ещё нет." },
+  { id: "li-22", name: "Соборный ангел",    faction: "light",  rarity: "epic",      power: 41, trait: "guard", flavor: "Держит свод в одиночку." },
+  { id: "li-23", name: "Хранитель Свода",   faction: "light",  rarity: "legendary", power: 58, trait: "guard", flavor: "Стоит, пока не сойдутся звёзды." },
+  { id: "li-24", name: "Первый Свет",       faction: "light",  rarity: "mythic",    power: 92, trait: "burst", flavor: "Из него началось всё, что не тень." },
+
+  { id: "sh-11", name: "Мгла",              faction: "shadow", rarity: "common",    power: 11, trait: "none",  flavor: "Дышит, когда все спят." },
+  { id: "sh-12", name: "Шёпот",             faction: "shadow", rarity: "common",    power: 10, trait: "drain", flavor: "Внятен только тому, кому предназначен." },
+  { id: "sh-13", name: "Крыса-сень",        faction: "shadow", rarity: "common",    power: 12, trait: "swift", flavor: "Её дом там, где нет света." },
+  { id: "sh-14", name: "Тёмное перо",       faction: "shadow", rarity: "common",    power: 13, trait: "swift", flavor: "Легче воздуха, злее воздуха." },
+  { id: "sh-15", name: "Ползучий",          faction: "shadow", rarity: "common",    power: 14, trait: "guard", flavor: "Всегда приходит за жаром." },
+  { id: "sh-16", name: "Кинжал тьмы",       faction: "shadow", rarity: "common",    power: 15, trait: "burst", flavor: "Бьёт без цвета и звука." },
+  { id: "sh-17", name: "Безликий",          faction: "shadow", rarity: "rare",      power: 24, trait: "none",  flavor: "Лицо — то, что все ждут увидеть." },
+  { id: "sh-18", name: "Ночная пчела",      faction: "shadow", rarity: "rare",      power: 21, trait: "drain", flavor: "Мёд тяжёлый, жалит первой." },
+  { id: "sh-19", name: "Тень прочь",        faction: "shadow", rarity: "rare",      power: 22, trait: "guard", flavor: "Её нельзя коснуться, но она касается." },
+  { id: "sh-20", name: "Чёрное зеркало",    faction: "shadow", rarity: "rare",      power: 26, trait: "drain", flavor: "Держит то, что ты не хотел показать." },
+  { id: "sh-21", name: "Пожиратель",        faction: "shadow", rarity: "epic",      power: 41, trait: "burst", flavor: "Живёт чужими страхами." },
+  { id: "sh-22", name: "Немой квартет",     faction: "shadow", rarity: "epic",      power: 35, trait: "guard", flavor: "Четверо, и ни одного имени." },
+  { id: "sh-23", name: "Владыка молчания",  faction: "shadow", rarity: "legendary", power: 60, trait: "none",  flavor: "Говорить при нём не принято." },
+  { id: "sh-24", name: "Дыхание за спиной", faction: "shadow", rarity: "mythic",    power: 90, trait: "drain", flavor: "Ты не увидишь. Только обернёшься." }
 ];
 
 var PACKS = {
@@ -1123,6 +1199,7 @@ var DEFAULTS = {
   gems: 40,
   shards: 0,
   owned: {},
+  up: {},
   profile: { name: "", avatar: 0, photo: "" },
   showcase: "",
   level: 1,
@@ -1167,7 +1244,7 @@ function load() {
     var merged = JSON.parse(JSON.stringify(DEFAULTS));
     for (var k in parsed) {
       if (!Object.prototype.hasOwnProperty.call(parsed, k)) continue;
-      if (k === "owned" || k === "stats" || k === "themes" || k === "season" || k === "factionRewards" || k === "arenaRewards" || k === "profile" || k === "quests" || k === "weekly" || k === "chests") {
+      if (k === "owned" || k === "stats" || k === "themes" || k === "season" || k === "factionRewards" || k === "arenaRewards" || k === "profile" || k === "quests" || k === "weekly" || k === "chests" || k === "up") {
         for (var kk in parsed[k]) merged[k][kk] = parsed[k][kk];
       } else {
         merged[k] = parsed[k];
@@ -1406,6 +1483,24 @@ function sigil(card) {
    ============================================================ */
 function ownedCount() { return Object.keys(state.owned).filter(function (id) { return state.owned[id] > 0; }).length; }
 function cardsByRarity(r) { return CARDS.filter(function (c) { return c.rarity === r; }); }
+
+var MAX_LEVEL = 5;
+function cardLevel(card) { return 1 + Math.min(MAX_LEVEL - 1, (state.up && state.up[card.id]) || 0); }
+function cardPower(card) { return Math.round(card.power * (1 + 0.08 * (cardLevel(card) - 1))); }
+function dupCount(card) { return Math.max(0, (state.owned[card.id] || 0) - 1); }
+function upCost(level) { return level; }
+function upCard(card) {
+  var lvl = cardLevel(card);
+  if (lvl >= MAX_LEVEL) return;
+  var cost = upCost(lvl);
+  if (dupCount(card) < cost) return;
+  state.owned[card.id] -= cost;
+  state.up[card.id] = (state.up[card.id] || 0) + 1;
+  save();
+  haptic("success");
+  sfx("crit");
+  render();
+}
 function xpNeed(level) { return 100 + (level - 1) * 60; }
 
 function addXp(n) {
@@ -1627,7 +1722,7 @@ function cardNode(card, opts) {
   btn.dataset.id = card.id;
   btn.setAttribute("aria-label",
     locked ? "Закрытая карта, " + RARITY[card.rarity].label
-           : card.name + ", " + RARITY[card.rarity].label + ", сила " + card.power);
+           : card.name + ", " + RARITY[card.rarity].label + ", сила " + cardPower(card) + ", уровень " + cardLevel(card));
 
   var inner = '<div class="card-art art-' + card.faction + '">' + sigil(card) +
     ((card.rarity === "legendary" || card.rarity === "mythic") && !locked ? '<div class="foil"></div>' : '') +
@@ -1644,11 +1739,13 @@ function cardNode(card, opts) {
   if (opts.isNew) inner += '<span class="new-flag">Новая</span>';
   else if (opts.dupeShards) inner += '<span class="dupe-flag">+' + opts.dupeShards + ' оск.</span>';
 
+  if (!locked && cardLevel(card) > 1) inner += '<span class="card-lvl">Ур.' + cardLevel(card) + "</span>";
+
   if (!locked && opts.count > 1) inner += '<span class="card-count">×' + opts.count + "</span>";
 
   inner += '<div class="card-foot">' +
     '<span class="card-name">' + (locked ? "???" : esc(card.name)) + "</span>" +
-    '<span class="card-pow num">' + (locked ? "—" : card.power) + "</span>" +
+    '<span class="card-pow num">' + (locked ? "—" : cardPower(card)) + "</span>" +
     "</div>";
 
   btn.innerHTML = inner;
@@ -2177,7 +2274,7 @@ function ensureTeam() {
   while (team.length < 3) {
     var pool = CARDS.filter(function (c) { return state.owned[c.id] && team.indexOf(c.id) === -1; });
     if (!pool.length) break;
-    pool.sort(function (a, b) { return b.power - a.power; });
+    pool.sort(function (a, b) { return cardPower(b) - cardPower(a); });
     team.push(pool[0].id);
   }
 }
@@ -2455,11 +2552,12 @@ function factionMult(a, b) {
 
 function makeFighter(card, side, boost, slot) {
   boost = boost || 1;
-  var hp = Math.round(card.power * 5 * boost);
+  var p = cardPower(card);
+  var hp = Math.round(p * 5 * boost);
   return {
     card: card, side: side, slot: slot,
     hp: hp, maxHp: hp,
-    atk: Math.round(card.power * boost),
+    atk: Math.round(p * boost),
     trait: card.trait
   };
 }
@@ -3781,7 +3879,9 @@ function openCard(card) {
     '<span class="rarity-tag" style="color:' + r.color + '"><i class="dot"></i>' + r.label + "</span>" +
     '<h2 class="h2">' + esc(card.name) + "</h2>" +
     '<div class="sub" style="font-size:12.5px">' + esc(FACTIONS[card.faction].name) + "</div>" +
-    '<div class="kv"><span>Сила</span><b class="num">' + card.power + "</b></div>" +
+    '<div class="kv"><span>Сила</span><b class="num">' + cardPower(card) +
+    (cardLevel(card) > 1 ? " <span style=\"color:var(--muted);font-size:11px\">(база " + card.power + ")</span>" : "") + "</b></div>" +
+    '<div class="kv"><span>Уровень</span><b class="num">' + cardLevel(card) + " / " + MAX_LEVEL + "</b></div>" +
     '<div class="kv"><span>В коллекции</span><b class="num">' + cnt + " шт.</b></div>" +
     "</div></div>" +
     '<div class="trait-box"><b>' + esc(t.name) + "</b><span>" + esc(t.text) + "</span></div>" +
@@ -3789,6 +3889,18 @@ function openCard(card) {
 
   if (cnt > 0) {
     var extra = (cnt - 1) * r.shards;
+    var lvl = cardLevel(card);
+    if (lvl < MAX_LEVEL) {
+      var need = upCost(lvl);
+      var have = dupCount(card);
+      var nextPow = Math.round(card.power * (1 + 0.08 * lvl));
+      html += '<div class="btn-row"><button class="btn btn-primary btn-block" id="upBtn" type="button" ' +
+        (have >= need ? "" : "disabled") + ">" +
+        "Усилить · " + need + " дубл. → сила " + nextPow + "</button></div>" +
+        '<p class="sub" style="font-size:11.5px;margin-top:6px">Дублей этой карты: ' + have + ", нужно " + need + ". Каждый уровень даёт +8% силы.</p>";
+    } else {
+      html += '<p class="sub" style="font-size:12px;color:var(--gold)">Максимальный уровень.</p>';
+    }
     html += '<div class="btn-row"><button class="btn btn-block" data-close type="button">Закрыть</button></div>';
     if (extra > 0) {
       html += '<p class="sub" style="font-size:12px;margin-top:10px">Повторы этой карты принесли ' + extra + " осколков.</p>";
@@ -3818,6 +3930,14 @@ function openCard(card) {
       render();
     });
   }
+
+  var upBtn = $("#upBtn");
+  if (upBtn) upBtn.addEventListener("click", function () {
+    if (dupCount(card) < upCost(cardLevel(card))) return;
+    upCard(card);
+    closeSheet();
+    openCard(card);
+  });
 }
 
 function craftCard(card) {
@@ -3868,7 +3988,7 @@ function openTeamPicker(slotIndex) {
     grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><b>Нет карт</b>Открой набор, чтобы собрать отряд.</div>';
     return;
   }
-  owned.sort(function (a, b) { return b.power - a.power; });
+  owned.sort(function (a, b) { return cardPower(b) - cardPower(a); });
   owned.forEach(function (c) {
     var n = cardNode(c, { static: true });
     var wrap = document.createElement("div");
